@@ -1,0 +1,16 @@
+tag_prefix = "v"
+ignore_merge_commits = true
+
+[changelog]
+path = "CHANGELOG.md"
+
+[git_hooks.commit-msg]
+script = """#!/bin/sh
+set -e
+cog verify --file "$1"
+lines=$(grep -v '^#' "$1" | grep -c '[^[:space:]]' || true)
+if [ "$lines" -gt 1 ]; then
+  echo "ERROR: commit message must be a single line" >&2
+  exit 1
+fi
+"""
