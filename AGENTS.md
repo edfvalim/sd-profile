@@ -41,6 +41,7 @@ card needs `sudo`; leave that to the user.
    `git switch main && git merge --squash <branch> && git commit -m "type(scope): summary"`.
    Then delete the branch with `git branch -D` (after a squash merge, `-d`
    doesn't see it as merged).
+4. Push `main`: `git push origin main`. Feature branches stay local.
 
 Scopes follow the modules: `cli`, `model`, `sd`, `disk`, `macos`, `linux`,
 `render`, plus `docs`, `deps`, `release`, and `repo` for repo-level files
