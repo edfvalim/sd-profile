@@ -1,0 +1,45 @@
+---
+source: tests/output.rs
+expression: out
+---
+{
+  "schema_version": 1,
+  "target": {
+    "kind": "disk_image",
+    "path": "mbr-fat32-truncated.img"
+  },
+  "layout": {
+    "size_bytes": 1048576,
+    "block_size": 512,
+    "partition_table": {
+      "value": {
+        "scheme": "mbr",
+        "disk_signature": "0x00000000",
+        "partitions": [
+          {
+            "number": 1,
+            "role": "primary",
+            "bootable": false,
+            "type": {
+              "id": "0x0b",
+              "name": "FAT32 (CHS)"
+            },
+            "start_lba": 63,
+            "sectors": 130977,
+            "offset_bytes": 32256,
+            "size_bytes": 67060224
+          }
+        ],
+        "issues": [
+          {
+            "kind": "past_end_of_disk",
+            "partition": 1,
+            "end_lba": 131039,
+            "disk_sectors": 2048
+          }
+        ]
+      },
+      "source": "partition_table"
+    }
+  }
+}

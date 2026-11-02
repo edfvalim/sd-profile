@@ -1,0 +1,16 @@
+---
+source: tests/output.rs
+expression: out
+---
+Target           gpt-exfat.img (disk image)
+Size             64.0 MiB (67108864 bytes)
+Sector size      512 bytes (131072 sectors)
+
+Partition table  GPT, disk GUID 5630E778-B583-4D47-9BB3-ECA13ECF5F7F
+Header           primary
+Usable sectors   LBA 34 to 131038
+Entry slots      128
+Protective MBR   yes
+
+  #  Start LBA  End LBA  Sectors      Size  Type
+  1       2048   129023   126976  62.0 MiB  Microsoft basic data

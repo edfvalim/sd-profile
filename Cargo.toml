@@ -9,6 +9,24 @@ readme = "README.md"
 publish = false
 
 [dependencies]
+# Command-line argument parsing.
+clap = { version = "4.6.7", features = ["derive"] }
+# Serialization of the profile for --json.
+serde = { version = "1.0.229", features = ["derive"] }
+# Writes the serialized profile as JSON.
+serde_json = "1.0.154"
+# Typed error enums in the library modules.
+thiserror = "2.0.21"
+
+[dev-dependencies]
+# Runs the built binary in the end-to-end tests.
+assert_cmd = "2.2.2"
+# Snapshot comparison of the end-to-end output.
+insta = "1.49.0"
+# Scratch directory for decompressed disk images.
+tempfile = "3.27.0"
+# Decompresses the disk image fixtures (committed as .img.zst).
+zstd = "0.14.3"
 
 [lints.clippy]
 pedantic = { level = "warn", priority = -1 }

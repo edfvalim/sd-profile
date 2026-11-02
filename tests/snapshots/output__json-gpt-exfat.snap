@@ -1,0 +1,47 @@
+---
+source: tests/output.rs
+expression: out
+---
+{
+  "schema_version": 1,
+  "target": {
+    "kind": "disk_image",
+    "path": "gpt-exfat.img"
+  },
+  "layout": {
+    "size_bytes": 67108864,
+    "block_size": 512,
+    "partition_table": {
+      "value": {
+        "scheme": "gpt",
+        "disk_guid": "5630E778-B583-4D47-9BB3-ECA13ECF5F7F",
+        "header": "primary",
+        "first_usable_lba": 34,
+        "last_usable_lba": 131038,
+        "entry_slots": 128,
+        "protective_mbr": "protective",
+        "partitions": [
+          {
+            "number": 1,
+            "type": {
+              "guid": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
+              "name": "Microsoft basic data"
+            },
+            "guid": "AAC12AB5-1174-4357-9363-CA0ADBDB559A",
+            "name": "",
+            "attributes": {
+              "raw": "0x0000000000000000",
+              "flags": []
+            },
+            "start_lba": 2048,
+            "sectors": 126976,
+            "offset_bytes": 1048576,
+            "size_bytes": 65011712
+          }
+        ],
+        "issues": []
+      },
+      "source": "partition_table"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+---
+source: tests/output.rs
+expression: out
+---
+Target           gpt-multi.img (disk image)
+Size             128.0 MiB (134217728 bytes)
+Sector size      512 bytes (262144 sectors)
+
+Partition table  GPT, disk GUID E3DF5357-8879-481B-B708-23C984202905
+Header           primary
+Usable sectors   LBA 34 to 262110
+Entry slots      128
+Protective MBR   yes
+
+  #  Start LBA  End LBA  Sectors      Size  Type
+  1       2048    79871    77824  38.0 MiB  Microsoft basic data
+  2      79872   172031    92160  45.0 MiB  Microsoft basic data

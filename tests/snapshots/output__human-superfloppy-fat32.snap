@@ -1,0 +1,9 @@
+---
+source: tests/output.rs
+expression: out
+---
+Target           superfloppy-fat32.img (disk image)
+Size             64.0 MiB (67108864 bytes)
+Sector size      512 bytes (131072 sectors)
+
+Partition table  none, a filesystem starts at sector 0 and spans the whole disk

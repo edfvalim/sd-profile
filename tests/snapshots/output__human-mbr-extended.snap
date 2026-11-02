@@ -1,0 +1,16 @@
+---
+source: tests/output.rs
+expression: out
+---
+Target           mbr-extended.img (disk image)
+Size             128.0 MiB (134217728 bytes)
+Sector size      512 bytes (262144 sectors)
+
+Partition table  MBR, disk signature 0x00000000
+
+  #  Role      Boot  Start LBA  End LBA  Sectors      Size  Type
+  1  primary                63    78190    78128  38.1 MiB  0x0b FAT32 (CHS)
+  2  primary             78246   109501    31256  15.3 MiB  0x06 FAT16
+  3  primary            109557   140812    31256  15.3 MiB  0x07 NTFS or exFAT
+  4  extended           140813   218995    78183  38.2 MiB  0x05 Extended (CHS)
+  5  logical            140868   218995    78128  38.1 MiB  0x0b FAT32 (CHS)

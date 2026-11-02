@@ -1,0 +1,22 @@
+---
+source: tests/output.rs
+expression: out
+---
+{
+  "schema_version": 1,
+  "target": {
+    "kind": "disk_image",
+    "path": "blank.img"
+  },
+  "layout": {
+    "size_bytes": 1048576,
+    "block_size": 512,
+    "partition_table": {
+      "value": {
+        "scheme": "none",
+        "reason": "blank"
+      },
+      "source": "partition_table"
+    }
+  }
+}

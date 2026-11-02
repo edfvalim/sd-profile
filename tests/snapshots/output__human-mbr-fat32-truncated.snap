@@ -1,0 +1,14 @@
+---
+source: tests/output.rs
+expression: out
+---
+Target           mbr-fat32-truncated.img (disk image)
+Size             1.0 MiB (1048576 bytes)
+Sector size      512 bytes (2048 sectors)
+
+Partition table  MBR, disk signature 0x00000000
+
+  #  Role     Boot  Start LBA  End LBA  Sectors      Size  Type
+  1  primary               63   131039   130977  64.0 MiB  0x0b FAT32 (CHS)
+
+WARN: partition 1 ends at LBA 131039, past the end of the disk (2048 sectors)

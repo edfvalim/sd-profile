@@ -1,0 +1,9 @@
+---
+source: tests/output.rs
+expression: out
+---
+Target           blank.img (disk image)
+Size             1.0 MiB (1048576 bytes)
+Sector size      512 bytes (2048 sectors)
+
+Partition table  none, the disk is blank (sector 0 is all zeros)

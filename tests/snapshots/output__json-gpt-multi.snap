@@ -1,0 +1,64 @@
+---
+source: tests/output.rs
+expression: out
+---
+{
+  "schema_version": 1,
+  "target": {
+    "kind": "disk_image",
+    "path": "gpt-multi.img"
+  },
+  "layout": {
+    "size_bytes": 134217728,
+    "block_size": 512,
+    "partition_table": {
+      "value": {
+        "scheme": "gpt",
+        "disk_guid": "E3DF5357-8879-481B-B708-23C984202905",
+        "header": "primary",
+        "first_usable_lba": 34,
+        "last_usable_lba": 262110,
+        "entry_slots": 128,
+        "protective_mbr": "protective",
+        "partitions": [
+          {
+            "number": 1,
+            "type": {
+              "guid": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
+              "name": "Microsoft basic data"
+            },
+            "guid": "A5A7B57F-4452-4042-B605-64B212D65738",
+            "name": "",
+            "attributes": {
+              "raw": "0x0000000000000000",
+              "flags": []
+            },
+            "start_lba": 2048,
+            "sectors": 77824,
+            "offset_bytes": 1048576,
+            "size_bytes": 39845888
+          },
+          {
+            "number": 2,
+            "type": {
+              "guid": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
+              "name": "Microsoft basic data"
+            },
+            "guid": "E61F21A3-485C-4383-A780-C548688BA7A7",
+            "name": "",
+            "attributes": {
+              "raw": "0x0000000000000000",
+              "flags": []
+            },
+            "start_lba": 79872,
+            "sectors": 92160,
+            "offset_bytes": 40894464,
+            "size_bytes": 47185920
+          }
+        ],
+        "issues": []
+      },
+      "source": "partition_table"
+    }
+  }
+}

@@ -1,0 +1,90 @@
+---
+source: tests/output.rs
+expression: out
+---
+{
+  "schema_version": 1,
+  "target": {
+    "kind": "disk_image",
+    "path": "mbr-extended.img"
+  },
+  "layout": {
+    "size_bytes": 134217728,
+    "block_size": 512,
+    "partition_table": {
+      "value": {
+        "scheme": "mbr",
+        "disk_signature": "0x00000000",
+        "partitions": [
+          {
+            "number": 1,
+            "role": "primary",
+            "bootable": false,
+            "type": {
+              "id": "0x0b",
+              "name": "FAT32 (CHS)"
+            },
+            "start_lba": 63,
+            "sectors": 78128,
+            "offset_bytes": 32256,
+            "size_bytes": 40001536
+          },
+          {
+            "number": 2,
+            "role": "primary",
+            "bootable": false,
+            "type": {
+              "id": "0x06",
+              "name": "FAT16"
+            },
+            "start_lba": 78246,
+            "sectors": 31256,
+            "offset_bytes": 40061952,
+            "size_bytes": 16003072
+          },
+          {
+            "number": 3,
+            "role": "primary",
+            "bootable": false,
+            "type": {
+              "id": "0x07",
+              "name": "NTFS or exFAT"
+            },
+            "start_lba": 109557,
+            "sectors": 31256,
+            "offset_bytes": 56093184,
+            "size_bytes": 16003072
+          },
+          {
+            "number": 4,
+            "role": "extended",
+            "bootable": false,
+            "type": {
+              "id": "0x05",
+              "name": "Extended (CHS)"
+            },
+            "start_lba": 140813,
+            "sectors": 78183,
+            "offset_bytes": 72096256,
+            "size_bytes": 40029696
+          },
+          {
+            "number": 5,
+            "role": "logical",
+            "bootable": false,
+            "type": {
+              "id": "0x0b",
+              "name": "FAT32 (CHS)"
+            },
+            "start_lba": 140868,
+            "sectors": 78128,
+            "offset_bytes": 72124416,
+            "size_bytes": 40001536
+          }
+        ],
+        "issues": []
+      },
+      "source": "partition_table"
+    }
+  }
+}

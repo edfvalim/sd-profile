@@ -1,0 +1,13 @@
+---
+source: tests/output.rs
+expression: out
+---
+Target           mbr-sd-aligned.img (disk image)
+Size             128.0 MiB (134217728 bytes)
+Sector size      512 bytes (262144 sectors)
+
+Partition table  MBR, disk signature 0x00000000
+
+  #  Role     Boot  Start LBA  End LBA  Sectors      Size  Type
+  1  primary  *          8192   139263   131072  64.0 MiB  0x0c FAT32 (LBA)
+  2  primary           139264   262143   122880  60.0 MiB  0x83 Linux

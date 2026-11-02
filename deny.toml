@@ -1,0 +1,25 @@
+# cargo-deny: dependency licenses, security advisories, duplicate versions and
+# sources. Run with `cargo deny check`.
+
+[advisories]
+# Fail on crates with security advisories, or that are unmaintained or yanked.
+unmaintained = "all"
+yanked = "deny"
+
+[licenses]
+# Only licenses that let the binary ship under MIT: permissive, with no
+# copyleft terms. Add to this list only after checking that holds.
+allow = [
+    "Apache-2.0",
+    "MIT",
+    "Unicode-3.0",
+]
+confidence-threshold = 0.9
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

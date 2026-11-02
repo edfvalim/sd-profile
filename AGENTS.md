@@ -21,13 +21,19 @@ change keeps the code ready for it.
   used, maintained crates. Give each one a short comment in `Cargo.toml`
   saying what it's for.
 
-Done means `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`
-and `cargo test` all pass.
+Done means `cargo fmt --check`, `cargo clippy --all-targets -- -D warnings`,
+`cargo test` and `cargo deny check` all pass.
 
 ## Testing
 
 Test against the disk images in `tests/fixtures/`. Running against a real
 card needs `sudo`; leave that to the user.
+
+- Disk images come from `scripts/make-disk-fixtures.sh` (macOS); add new
+  ones there rather than committing hand-made files.
+- `tests/output.rs` compares output with insta snapshots in
+  `tests/snapshots/`. After an intended output change, write them with
+  `INSTA_UPDATE=always cargo test` and review the diff before committing.
 
 ## Git workflow
 

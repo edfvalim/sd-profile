@@ -1,0 +1,51 @@
+---
+source: tests/output.rs
+expression: out
+---
+{
+  "schema_version": 1,
+  "target": {
+    "kind": "disk_image",
+    "path": "mbr-sd-aligned.img"
+  },
+  "layout": {
+    "size_bytes": 134217728,
+    "block_size": 512,
+    "partition_table": {
+      "value": {
+        "scheme": "mbr",
+        "disk_signature": "0x00000000",
+        "partitions": [
+          {
+            "number": 1,
+            "role": "primary",
+            "bootable": true,
+            "type": {
+              "id": "0x0c",
+              "name": "FAT32 (LBA)"
+            },
+            "start_lba": 8192,
+            "sectors": 131072,
+            "offset_bytes": 4194304,
+            "size_bytes": 67108864
+          },
+          {
+            "number": 2,
+            "role": "primary",
+            "bootable": false,
+            "type": {
+              "id": "0x83",
+              "name": "Linux"
+            },
+            "start_lba": 139264,
+            "sectors": 122880,
+            "offset_bytes": 71303168,
+            "size_bytes": 62914560
+          }
+        ],
+        "issues": []
+      },
+      "source": "partition_table"
+    }
+  }
+}
