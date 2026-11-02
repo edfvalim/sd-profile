@@ -85,6 +85,213 @@ expression: out
         "issues": []
       },
       "source": "partition_table"
-    }
+    },
+    "volumes": [
+      {
+        "partition": 1,
+        "start_lba": 63,
+        "sectors": 78128,
+        "offset_bytes": 32256,
+        "size_bytes": 40001536,
+        "filesystem": {
+          "value": {
+            "type": "fat32",
+            "label": {
+              "value": "ONE",
+              "source": "root_directory"
+            },
+            "volume_id": "41EB-19ED",
+            "oem_name": "BSD  4.4",
+            "sector_size_bytes": 512,
+            "cluster_size_bytes": 512,
+            "cluster_count": 76894,
+            "size_bytes": 39369728,
+            "free_bytes": {
+              "value": 39367168,
+              "source": "allocation_table"
+            },
+            "data_offset_bytes": 631808,
+            "reserved_sectors": 32,
+            "fat_count": 2,
+            "fat32": {
+              "fsinfo_sector": 1,
+              "backup_boot_sector": 6
+            },
+            "issues": []
+          },
+          "source": "boot_sector"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 32256,
+            "aligned_to_bytes": 512
+          },
+          "data": {
+            "disk_offset_bytes": 664064,
+            "aligned_to_bytes": 512
+          },
+          "dos_cylinder_start": true,
+          "status": "misaligned",
+          "boundary": {
+            "bytes": 32768,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 134217728
+          },
+          "misaligned": "start_and_data"
+        }
+      },
+      {
+        "partition": 2,
+        "start_lba": 78246,
+        "sectors": 31256,
+        "offset_bytes": 40061952,
+        "size_bytes": 16003072,
+        "filesystem": {
+          "value": {
+            "type": "fat16",
+            "label": {
+              "value": "TWO",
+              "source": "root_directory"
+            },
+            "volume_id": "8A69-19ED",
+            "oem_name": "BSD  4.4",
+            "sector_size_bytes": 512,
+            "cluster_size_bytes": 1024,
+            "cluster_count": 15550,
+            "size_bytes": 15923200,
+            "free_bytes": {
+              "value": 15919104,
+              "source": "allocation_table"
+            },
+            "data_offset_bytes": 79360,
+            "reserved_sectors": 1,
+            "fat_count": 2,
+            "fat32": null,
+            "issues": []
+          },
+          "source": "boot_sector"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 40061952,
+            "aligned_to_bytes": 1024
+          },
+          "data": {
+            "disk_offset_bytes": 40141312,
+            "aligned_to_bytes": 512
+          },
+          "dos_cylinder_start": false,
+          "status": "misaligned",
+          "boundary": {
+            "bytes": 32768,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 134217728
+          },
+          "misaligned": "data"
+        }
+      },
+      {
+        "partition": 3,
+        "start_lba": 109557,
+        "sectors": 31256,
+        "offset_bytes": 56093184,
+        "size_bytes": 16003072,
+        "filesystem": {
+          "value": {
+            "type": "exfat",
+            "label": {
+              "value": "THREE",
+              "source": "root_directory"
+            },
+            "volume_id": "6AE9-08CB",
+            "revision": "1.00",
+            "sector_size_bytes": 512,
+            "cluster_size_bytes": 4096,
+            "cluster_count": 3875,
+            "size_bytes": 15872000,
+            "free_bytes": {
+              "value": 15839232,
+              "source": "allocation_bitmap"
+            },
+            "data_offset_bytes": 131072,
+            "fat_count": 1,
+            "percent_in_use": 0,
+            "issues": []
+          },
+          "source": "boot_sector"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 56093184,
+            "aligned_to_bytes": 512
+          },
+          "data": {
+            "disk_offset_bytes": 56224256,
+            "aligned_to_bytes": 512
+          },
+          "dos_cylinder_start": false,
+          "status": "misaligned",
+          "boundary": {
+            "bytes": 32768,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 134217728
+          },
+          "misaligned": "start_and_data"
+        }
+      },
+      {
+        "partition": 5,
+        "start_lba": 140868,
+        "sectors": 78128,
+        "offset_bytes": 72124416,
+        "size_bytes": 40001536,
+        "filesystem": {
+          "value": {
+            "type": "fat32",
+            "label": {
+              "value": "FOUR",
+              "source": "root_directory"
+            },
+            "volume_id": "C923-19ED",
+            "oem_name": "BSD  4.4",
+            "sector_size_bytes": 512,
+            "cluster_size_bytes": 512,
+            "cluster_count": 76894,
+            "size_bytes": 39369728,
+            "free_bytes": {
+              "value": 39367168,
+              "source": "allocation_table"
+            },
+            "data_offset_bytes": 631808,
+            "reserved_sectors": 32,
+            "fat_count": 2,
+            "fat32": {
+              "fsinfo_sector": 1,
+              "backup_boot_sector": 6
+            },
+            "issues": []
+          },
+          "source": "boot_sector"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 72124416,
+            "aligned_to_bytes": 2048
+          },
+          "data": {
+            "disk_offset_bytes": 72756224,
+            "aligned_to_bytes": 1024
+          },
+          "dos_cylinder_start": false,
+          "status": "misaligned",
+          "boundary": {
+            "bytes": 32768,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 134217728
+          },
+          "misaligned": "start_and_data"
+        }
+      }
+    ]
   }
 }

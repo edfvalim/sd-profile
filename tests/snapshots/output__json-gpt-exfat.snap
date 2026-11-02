@@ -14,7 +14,7 @@ expression: out
     "partition_table": {
       "value": {
         "scheme": "gpt",
-        "disk_guid": "5630E778-B583-4D47-9BB3-ECA13ECF5F7F",
+        "disk_guid": "C165067A-678C-42E6-A3A9-13C455E6BBCD",
         "header": "primary",
         "first_usable_lba": 34,
         "last_usable_lba": 131038,
@@ -27,7 +27,7 @@ expression: out
               "guid": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
               "name": "Microsoft basic data"
             },
-            "guid": "AAC12AB5-1174-4357-9363-CA0ADBDB559A",
+            "guid": "05C4D48D-AB06-49D3-8BCE-80BB5DD03CEB",
             "name": "",
             "attributes": {
               "raw": "0x0000000000000000",
@@ -42,6 +42,56 @@ expression: out
         "issues": []
       },
       "source": "partition_table"
-    }
+    },
+    "volumes": [
+      {
+        "partition": 1,
+        "start_lba": 2048,
+        "sectors": 126976,
+        "offset_bytes": 1048576,
+        "size_bytes": 65011712,
+        "filesystem": {
+          "value": {
+            "type": "exfat",
+            "label": {
+              "value": "CARD",
+              "source": "root_directory"
+            },
+            "volume_id": "6AE9-08CF",
+            "revision": "1.00",
+            "sector_size_bytes": 512,
+            "cluster_size_bytes": 4096,
+            "cluster_count": 15840,
+            "size_bytes": 64880640,
+            "free_bytes": {
+              "value": 61661184,
+              "source": "allocation_bitmap"
+            },
+            "data_offset_bytes": 131072,
+            "fat_count": 1,
+            "percent_in_use": 4,
+            "issues": []
+          },
+          "source": "boot_sector"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 1048576,
+            "aligned_to_bytes": 1048576
+          },
+          "data": {
+            "disk_offset_bytes": 1179648,
+            "aligned_to_bytes": 131072
+          },
+          "dos_cylinder_start": false,
+          "status": "aligned",
+          "boundary": {
+            "bytes": 16384,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 67108864
+          }
+        }
+      }
+    ]
   }
 }

@@ -33,6 +33,61 @@ expression: out
         "issues": []
       },
       "source": "partition_table"
-    }
+    },
+    "volumes": [
+      {
+        "partition": 1,
+        "start_lba": 63,
+        "sectors": 130977,
+        "offset_bytes": 32256,
+        "size_bytes": 67060224,
+        "filesystem": {
+          "value": {
+            "type": "fat32",
+            "label": {
+              "value": "SDTEST",
+              "source": "root_directory"
+            },
+            "volume_id": "4642-19ED",
+            "oem_name": "BSD  4.4",
+            "sector_size_bytes": 512,
+            "cluster_size_bytes": 512,
+            "cluster_count": 128929,
+            "size_bytes": 66011648,
+            "free_bytes": {
+              "value": 62836736,
+              "source": "allocation_table"
+            },
+            "data_offset_bytes": 1048576,
+            "reserved_sectors": 32,
+            "fat_count": 2,
+            "fat32": {
+              "fsinfo_sector": 1,
+              "backup_boot_sector": 6
+            },
+            "issues": []
+          },
+          "source": "boot_sector"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 32256,
+            "aligned_to_bytes": 512
+          },
+          "data": {
+            "disk_offset_bytes": 1080832,
+            "aligned_to_bytes": 512
+          },
+          "dos_cylinder_start": true,
+          "status": "misaligned",
+          "boundary": {
+            "bytes": 16384,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 67108864
+          },
+          "misaligned": "start_and_data"
+        }
+      }
+    ]
   }
 }

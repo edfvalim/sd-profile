@@ -15,10 +15,13 @@ const IMAGES: &[&str] = &[
     "blank",
     "gpt-exfat",
     "gpt-multi",
+    "mbr-ext",
     "mbr-extended",
+    "mbr-fat12-fat16",
     "mbr-fat32",
     "mbr-fat32-truncated",
     "mbr-sd-aligned",
+    "superfloppy-ext4",
     "superfloppy-fat32",
 ];
 

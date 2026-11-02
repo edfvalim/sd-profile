@@ -1,0 +1,245 @@
+---
+source: tests/output.rs
+expression: out
+---
+{
+  "schema_version": 1,
+  "target": {
+    "kind": "disk_image",
+    "path": "mbr-ext.img"
+  },
+  "layout": {
+    "size_bytes": 67108864,
+    "block_size": 512,
+    "partition_table": {
+      "value": {
+        "scheme": "mbr",
+        "disk_signature": "0x00000000",
+        "partitions": [
+          {
+            "number": 1,
+            "role": "primary",
+            "bootable": false,
+            "type": {
+              "id": "0x83",
+              "name": "Linux"
+            },
+            "start_lba": 2048,
+            "sectors": 40960,
+            "offset_bytes": 1048576,
+            "size_bytes": 20971520
+          },
+          {
+            "number": 2,
+            "role": "primary",
+            "bootable": false,
+            "type": {
+              "id": "0x83",
+              "name": "Linux"
+            },
+            "start_lba": 43008,
+            "sectors": 40960,
+            "offset_bytes": 22020096,
+            "size_bytes": 20971520
+          },
+          {
+            "number": 3,
+            "role": "primary",
+            "bootable": false,
+            "type": {
+              "id": "0x83",
+              "name": "Linux"
+            },
+            "start_lba": 83968,
+            "sectors": 40960,
+            "offset_bytes": 42991616,
+            "size_bytes": 20971520
+          }
+        ],
+        "issues": []
+      },
+      "source": "partition_table"
+    },
+    "volumes": [
+      {
+        "partition": 1,
+        "start_lba": 2048,
+        "sectors": 40960,
+        "offset_bytes": 1048576,
+        "size_bytes": 20971520,
+        "filesystem": {
+          "value": {
+            "type": "ext2",
+            "label": {
+              "value": "two",
+              "source": "superblock"
+            },
+            "uuid": "7a8913ea-ff85-4a3f-83be-f57eb5e34921",
+            "block_size_bytes": 1024,
+            "block_count": 20480,
+            "size_bytes": 20971520,
+            "free_bytes": {
+              "value": 16312320,
+              "source": "group_descriptors"
+            },
+            "reserved_bytes": 1048576,
+            "inode_count": 5112,
+            "free_inodes": 5096,
+            "last_mounted": null,
+            "revision": 1,
+            "features": [
+              "ext_attr",
+              "resize_inode",
+              "dir_index",
+              "filetype",
+              "sparse_super",
+              "large_file"
+            ],
+            "issues": []
+          },
+          "source": "superblock"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 1048576,
+            "aligned_to_bytes": 1048576
+          },
+          "data": {
+            "disk_offset_bytes": 1048576,
+            "aligned_to_bytes": 1048576
+          },
+          "dos_cylinder_start": false,
+          "status": "aligned",
+          "boundary": {
+            "bytes": 16384,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 67108864
+          }
+        }
+      },
+      {
+        "partition": 2,
+        "start_lba": 43008,
+        "sectors": 40960,
+        "offset_bytes": 22020096,
+        "size_bytes": 20971520,
+        "filesystem": {
+          "value": {
+            "type": "ext3",
+            "label": {
+              "value": "three",
+              "source": "superblock"
+            },
+            "uuid": "08e5bf8a-2c67-4860-891d-9c595e9bca0d",
+            "block_size_bytes": 1024,
+            "block_count": 20480,
+            "size_bytes": 20971520,
+            "free_bytes": {
+              "value": 15258624,
+              "source": "group_descriptors"
+            },
+            "reserved_bytes": 1048576,
+            "inode_count": 5112,
+            "free_inodes": 5096,
+            "last_mounted": null,
+            "revision": 1,
+            "features": [
+              "has_journal",
+              "ext_attr",
+              "resize_inode",
+              "dir_index",
+              "filetype",
+              "sparse_super",
+              "large_file"
+            ],
+            "issues": []
+          },
+          "source": "superblock"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 22020096,
+            "aligned_to_bytes": 1048576
+          },
+          "data": {
+            "disk_offset_bytes": 22020096,
+            "aligned_to_bytes": 1048576
+          },
+          "dos_cylinder_start": false,
+          "status": "aligned",
+          "boundary": {
+            "bytes": 16384,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 67108864
+          }
+        }
+      },
+      {
+        "partition": 3,
+        "start_lba": 83968,
+        "sectors": 40960,
+        "offset_bytes": 42991616,
+        "size_bytes": 20971520,
+        "filesystem": {
+          "value": {
+            "type": "ext4",
+            "label": {
+              "value": "four",
+              "source": "superblock"
+            },
+            "uuid": "9def6b63-9922-4532-900b-a030b8bcc495",
+            "block_size_bytes": 1024,
+            "block_count": 20480,
+            "size_bytes": 20971520,
+            "free_bytes": {
+              "value": 15080448,
+              "source": "group_descriptors"
+            },
+            "reserved_bytes": 1048576,
+            "inode_count": 5112,
+            "free_inodes": 5095,
+            "last_mounted": null,
+            "revision": 1,
+            "features": [
+              "has_journal",
+              "ext_attr",
+              "resize_inode",
+              "dir_index",
+              "orphan_file",
+              "filetype",
+              "extent",
+              "64bit",
+              "flex_bg",
+              "metadata_csum_seed",
+              "sparse_super",
+              "large_file",
+              "huge_file",
+              "dir_nlink",
+              "extra_isize",
+              "metadata_csum"
+            ],
+            "issues": []
+          },
+          "source": "superblock"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 42991616,
+            "aligned_to_bytes": 1048576
+          },
+          "data": {
+            "disk_offset_bytes": 42991616,
+            "aligned_to_bytes": 1048576
+          },
+          "dos_cylinder_start": false,
+          "status": "aligned",
+          "boundary": {
+            "bytes": 16384,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 67108864
+          }
+        }
+      }
+    ]
+  }
+}

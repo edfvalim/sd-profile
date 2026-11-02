@@ -14,7 +14,7 @@ expression: out
     "partition_table": {
       "value": {
         "scheme": "gpt",
-        "disk_guid": "E3DF5357-8879-481B-B708-23C984202905",
+        "disk_guid": "2E32BC55-D5AA-4E81-BE01-2609AD7B388C",
         "header": "primary",
         "first_usable_lba": 34,
         "last_usable_lba": 262110,
@@ -27,7 +27,7 @@ expression: out
               "guid": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
               "name": "Microsoft basic data"
             },
-            "guid": "A5A7B57F-4452-4042-B605-64B212D65738",
+            "guid": "7124D718-BC45-4579-BC58-597565EAD0BE",
             "name": "",
             "attributes": {
               "raw": "0x0000000000000000",
@@ -44,7 +44,7 @@ expression: out
               "guid": "EBD0A0A2-B9E5-4433-87C0-68B6B72699C7",
               "name": "Microsoft basic data"
             },
-            "guid": "E61F21A3-485C-4383-A780-C548688BA7A7",
+            "guid": "CE9DAB39-685E-4B77-9536-9EE3C5B572A1",
             "name": "",
             "attributes": {
               "raw": "0x0000000000000000",
@@ -59,6 +59,109 @@ expression: out
         "issues": []
       },
       "source": "partition_table"
-    }
+    },
+    "volumes": [
+      {
+        "partition": 1,
+        "start_lba": 2048,
+        "sectors": 77824,
+        "offset_bytes": 1048576,
+        "size_bytes": 39845888,
+        "filesystem": {
+          "value": {
+            "type": "fat32",
+            "label": {
+              "value": "BOOT",
+              "source": "root_directory"
+            },
+            "volume_id": "5AC8-19EE",
+            "oem_name": "BSD  4.4",
+            "sector_size_bytes": 512,
+            "cluster_size_bytes": 512,
+            "cluster_count": 76594,
+            "size_bytes": 39216128,
+            "free_bytes": {
+              "value": 39213568,
+              "source": "allocation_table"
+            },
+            "data_offset_bytes": 629760,
+            "reserved_sectors": 32,
+            "fat_count": 2,
+            "fat32": {
+              "fsinfo_sector": 1,
+              "backup_boot_sector": 6
+            },
+            "issues": []
+          },
+          "source": "boot_sector"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 1048576,
+            "aligned_to_bytes": 1048576
+          },
+          "data": {
+            "disk_offset_bytes": 1678336,
+            "aligned_to_bytes": 1024
+          },
+          "dos_cylinder_start": false,
+          "status": "misaligned",
+          "boundary": {
+            "bytes": 32768,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 134217728
+          },
+          "misaligned": "data"
+        }
+      },
+      {
+        "partition": 2,
+        "start_lba": 79872,
+        "sectors": 92160,
+        "offset_bytes": 40894464,
+        "size_bytes": 47185920,
+        "filesystem": {
+          "value": {
+            "type": "exfat",
+            "label": {
+              "value": "DATA",
+              "source": "root_directory"
+            },
+            "volume_id": "6AE9-08D2",
+            "revision": "1.00",
+            "sector_size_bytes": 512,
+            "cluster_size_bytes": 4096,
+            "cluster_count": 11488,
+            "size_bytes": 47054848,
+            "free_bytes": {
+              "value": 47022080,
+              "source": "allocation_bitmap"
+            },
+            "data_offset_bytes": 131072,
+            "fat_count": 1,
+            "percent_in_use": 0,
+            "issues": []
+          },
+          "source": "boot_sector"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 40894464,
+            "aligned_to_bytes": 1048576
+          },
+          "data": {
+            "disk_offset_bytes": 41025536,
+            "aligned_to_bytes": 131072
+          },
+          "dos_cylinder_start": false,
+          "status": "aligned",
+          "boundary": {
+            "bytes": 32768,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 134217728
+          }
+        }
+      }
+    ]
   }
 }

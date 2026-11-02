@@ -1,0 +1,90 @@
+---
+source: tests/output.rs
+expression: out
+---
+{
+  "schema_version": 1,
+  "target": {
+    "kind": "disk_image",
+    "path": "superfloppy-ext4.img"
+  },
+  "layout": {
+    "size_bytes": 8388608,
+    "block_size": 512,
+    "partition_table": {
+      "value": {
+        "scheme": "none",
+        "reason": "whole_disk_filesystem"
+      },
+      "source": "partition_table"
+    },
+    "volumes": [
+      {
+        "partition": null,
+        "start_lba": 0,
+        "sectors": 16384,
+        "offset_bytes": 0,
+        "size_bytes": 8388608,
+        "filesystem": {
+          "value": {
+            "type": "ext4",
+            "label": {
+              "value": "FLOPPY",
+              "source": "superblock"
+            },
+            "uuid": "d9a467c1-65a5-4da2-b36c-dafd8f4d49be",
+            "block_size_bytes": 1024,
+            "block_count": 8192,
+            "size_bytes": 8388608,
+            "free_bytes": {
+              "value": 3549184,
+              "source": "group_descriptors"
+            },
+            "reserved_bytes": 418816,
+            "inode_count": 2048,
+            "free_inodes": 2031,
+            "last_mounted": null,
+            "revision": 1,
+            "features": [
+              "has_journal",
+              "ext_attr",
+              "resize_inode",
+              "dir_index",
+              "orphan_file",
+              "filetype",
+              "extent",
+              "64bit",
+              "flex_bg",
+              "metadata_csum_seed",
+              "sparse_super",
+              "large_file",
+              "huge_file",
+              "dir_nlink",
+              "extra_isize",
+              "metadata_csum"
+            ],
+            "issues": []
+          },
+          "source": "superblock"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 0,
+            "aligned_to_bytes": 1073741824
+          },
+          "data": {
+            "disk_offset_bytes": 0,
+            "aligned_to_bytes": 1073741824
+          },
+          "dos_cylinder_start": false,
+          "status": "aligned",
+          "boundary": {
+            "bytes": 8192,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 8388608
+          }
+        }
+      }
+    ]
+  }
+}

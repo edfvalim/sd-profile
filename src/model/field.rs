@@ -8,14 +8,27 @@ use serde::ser::{Serialize, SerializeMap, Serializer};
 /// Where a value was read from.
 ///
 /// Serialized in snake case (`"partition_table"`). Later sources (the I/O
-/// Registry, `/sys`, card registers, boot sectors) are added as the parts that
-/// read them arrive.
+/// Registry, `/sys`, card registers) are added as the parts that read them
+/// arrive.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Source {
     /// The partition table sectors on the disk: MBR, extended boot records,
     /// GPT headers and entries.
     PartitionTable,
+    /// The first sector of a FAT, exFAT or NTFS volume, or the first sectors
+    /// of any volume when probing what it holds.
+    BootSector,
+    /// The root directory of a FAT or exFAT volume (its volume label entry).
+    RootDirectory,
+    /// The file allocation table of a FAT volume.
+    AllocationTable,
+    /// The allocation bitmap of an exFAT volume.
+    AllocationBitmap,
+    /// The superblock of an ext2, ext3 or ext4 volume.
+    Superblock,
+    /// The block group descriptors of an ext2, ext3 or ext4 volume.
+    GroupDescriptors,
 }
 
 /// Why a value is missing from the profile.

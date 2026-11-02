@@ -1,0 +1,48 @@
+---
+source: tests/output.rs
+expression: out
+---
+Target           mbr-ext.img (disk image)
+Size             64.0 MiB (67108864 bytes)
+Sector size      512 bytes (131072 sectors)
+
+Partition table  MBR, disk signature 0x00000000
+
+  #  Role     Boot  Start LBA  End LBA  Sectors      Size  Type
+  1  primary             2048    43007    40960  20.0 MiB  0x83 Linux
+  2  primary            43008    83967    40960  20.0 MiB  0x83 Linux
+  3  primary            83968   124927    40960  20.0 MiB  0x83 Linux
+
+Partition 1      ext2
+  Label          two
+  UUID           7a8913ea-ff85-4a3f-83be-f57eb5e34921
+  Size           20.0 MiB in 20480 blocks of 1.0 KiB
+  Free           15.6 MiB (77.8%), 1.0 MiB of it reserved for root
+  Inodes         5096 of 5112 free
+  Features       ext_attr resize_inode dir_index filetype sparse_super
+                 large_file
+  Start          LBA 2048, a multiple of 1 MiB
+  Alignment      ok, data area at 1 MiB, on the 16 KiB boundary for 64.0 MiB SDSC
+
+Partition 2      ext3
+  Label          three
+  UUID           08e5bf8a-2c67-4860-891d-9c595e9bca0d
+  Size           20.0 MiB in 20480 blocks of 1.0 KiB
+  Free           14.6 MiB (72.8%), 1.0 MiB of it reserved for root
+  Inodes         5096 of 5112 free
+  Features       has_journal ext_attr resize_inode dir_index filetype
+                 sparse_super large_file
+  Start          LBA 43008, a multiple of 1 MiB
+  Alignment      ok, data area at 21 MiB, on the 16 KiB boundary for 64.0 MiB SDSC
+
+Partition 3      ext4
+  Label          four
+  UUID           9def6b63-9922-4532-900b-a030b8bcc495
+  Size           20.0 MiB in 20480 blocks of 1.0 KiB
+  Free           14.4 MiB (71.9%), 1.0 MiB of it reserved for root
+  Inodes         5095 of 5112 free
+  Features       has_journal ext_attr resize_inode dir_index orphan_file
+                 filetype extent 64bit flex_bg metadata_csum_seed sparse_super
+                 large_file huge_file dir_nlink extra_isize metadata_csum
+  Start          LBA 83968, a multiple of 1 MiB
+  Alignment      ok, data area at 41 MiB, on the 16 KiB boundary for 64.0 MiB SDSC

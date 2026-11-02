@@ -36,9 +36,16 @@ fn profile(args: &Args) -> Result<Profile, Error> {
     // Images have no sector size of their own; use the one every SD card has.
     let block_size = BlockSize::SD;
     let mut reader = AlignedReader::new(opened.file, block_size, opened.size);
-    let partition_table = match disk::table::read(&mut reader) {
-        Ok(table) => Field::known(table, Source::PartitionTable),
-        Err(err) => Field::Unavailable(Unavailable::ReadFailed(err.to_string())),
+    let (partition_table, volumes) = match disk::table::read(&mut reader) {
+        Ok(table) => {
+            // An image has no card; its size stands in for the card's capacity.
+            let volumes = disk::volumes::read(&mut reader, &table, opened.size);
+            (Field::known(table, Source::PartitionTable), volumes)
+        }
+        Err(err) => (
+            Field::Unavailable(Unavailable::ReadFailed(err.to_string())),
+            Vec::new(),
+        ),
     };
 
     Ok(Profile::new(
@@ -49,6 +56,7 @@ fn profile(args: &Args) -> Result<Profile, Error> {
             size_bytes: opened.size,
             block_size,
             partition_table,
+            volumes,
         },
     ))
 }

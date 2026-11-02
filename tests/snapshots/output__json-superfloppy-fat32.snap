@@ -17,6 +17,60 @@ expression: out
         "reason": "whole_disk_filesystem"
       },
       "source": "partition_table"
-    }
+    },
+    "volumes": [
+      {
+        "partition": null,
+        "start_lba": 0,
+        "sectors": 131072,
+        "offset_bytes": 0,
+        "size_bytes": 67108864,
+        "filesystem": {
+          "value": {
+            "type": "fat32",
+            "label": {
+              "value": "FLOPPY",
+              "source": "root_directory"
+            },
+            "volume_id": "F26A-19EE",
+            "oem_name": "BSD  4.4",
+            "sector_size_bytes": 512,
+            "cluster_size_bytes": 512,
+            "cluster_count": 129022,
+            "size_bytes": 66059264,
+            "free_bytes": {
+              "value": 66058752,
+              "source": "allocation_table"
+            },
+            "data_offset_bytes": 1048576,
+            "reserved_sectors": 32,
+            "fat_count": 2,
+            "fat32": {
+              "fsinfo_sector": 1,
+              "backup_boot_sector": 6
+            },
+            "issues": []
+          },
+          "source": "boot_sector"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 0,
+            "aligned_to_bytes": 1073741824
+          },
+          "data": {
+            "disk_offset_bytes": 1048576,
+            "aligned_to_bytes": 1048576
+          },
+          "dos_cylinder_start": false,
+          "status": "aligned",
+          "boundary": {
+            "bytes": 16384,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 67108864
+          }
+        }
+      }
+    ]
   }
 }

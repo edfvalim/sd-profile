@@ -4,12 +4,18 @@
 use std::io::{self, Write};
 
 use crate::model::{
-    EbrProblem, Extent, Field, GptFlag, GptHeaderProblem, GptPartition, GptTable, HeaderCopy,
-    Issue, Layout, MbrPartition, MbrRole, MbrTable, NoTableReason, PartitionTable, Profile,
-    ProtectiveMbr, Target,
+    Alignment, AlignmentCheck, Boundary, CapacityClass, EbrProblem, Exfat, Ext, Extent, Fat, Field,
+    Filesystem, FsIssue, GptFlag, GptHeaderProblem, GptPartition, GptTable, HeaderCopy, Issue,
+    Layout, MbrPartition, MbrRole, MbrTable, Misaligned, NoTableReason, PartitionTable, Profile,
+    ProtectiveMbr, Source, Target, Volume,
 };
 
 const LABEL_WIDTH: usize = 17;
+/// Width of a nested label: two spaces of indent less than [`LABEL_WIDTH`],
+/// so nested values line up with top-level ones.
+const SUB_LABEL_WIDTH: usize = LABEL_WIDTH - 2;
+/// Lines that wrap (the ext feature list) stay within this many columns.
+const MAX_WIDTH: usize = 80;
 
 /// Writes the profile as a readable report.
 ///
@@ -29,7 +35,22 @@ fn line(out: &mut impl Write, label: &str, value: &str) -> io::Result<()> {
     writeln!(out, "{label:<LABEL_WIDTH$}{value}")
 }
 
+/// A line nested under a heading line, its value aligned with top-level
+/// values.
+fn sub_line(out: &mut impl Write, label: &str, value: &str) -> io::Result<()> {
+    writeln!(out, "  {label:<SUB_LABEL_WIDTH$}{value}")
+}
+
 fn write_layout(layout: &Layout, out: &mut impl Write) -> io::Result<()> {
+    write_table_section(layout, out)?;
+    for volume in &layout.volumes {
+        writeln!(out)?;
+        write_volume(volume, out)?;
+    }
+    Ok(())
+}
+
+fn write_table_section(layout: &Layout, out: &mut impl Write) -> io::Result<()> {
     line(
         out,
         "Size",
@@ -293,6 +314,310 @@ fn gpt_problem_text(problem: GptHeaderProblem) -> &'static str {
     }
 }
 
+fn write_volume(volume: &Volume, out: &mut impl Write) -> io::Result<()> {
+    let name = match volume.partition {
+        Some(number) => format!("Partition {number}"),
+        None => "Whole disk".to_owned(),
+    };
+    let issues = match &volume.filesystem {
+        Field::Unavailable(reason) => {
+            line(out, &name, &format!("filesystem unavailable ({reason})"))?;
+            &[]
+        }
+        Field::Known { value, .. } => {
+            let heading = match value {
+                Filesystem::Ntfs => "NTFS (not profiled)",
+                Filesystem::Blank => "no filesystem, its first sectors are all zeros",
+                Filesystem::Unrecognized => "unrecognized filesystem",
+                profiled => profiled.name(),
+            };
+            line(out, &name, heading)?;
+            match value {
+                Filesystem::Fat12(fat) | Filesystem::Fat16(fat) | Filesystem::Fat32(fat) => {
+                    write_fat(fat, out)?;
+                }
+                Filesystem::Exfat(exfat) => write_exfat(exfat, out)?,
+                Filesystem::Ext2(ext) | Filesystem::Ext3(ext) | Filesystem::Ext4(ext) => {
+                    write_ext(ext, out)?;
+                }
+                Filesystem::Ntfs | Filesystem::Blank | Filesystem::Unrecognized => {}
+            }
+            value.issues()
+        }
+    };
+    sub_line(out, "Start", &start_text(volume))?;
+    sub_line(out, "Alignment", &alignment_text(&volume.alignment))?;
+
+    let prefix = name.to_lowercase();
+    let mut warnings: Vec<String> = issues.iter().map(fs_issue_text).collect();
+    if volume.alignment.dos_cylinder_start {
+        warnings.push(
+            "it starts at LBA 63, the old DOS cylinder layout that macOS Disk Utility writes \
+             for MBR"
+                .to_owned(),
+        );
+    }
+    if let AlignmentCheck::Misaligned { boundary, .. } = volume.alignment.check {
+        warnings.push(format!(
+            "its clusters straddle the {} boundaries the SD specification recommends for this \
+             capacity, which slows writes and wears the card",
+            exact_size(boundary.bytes)
+        ));
+    }
+    if !warnings.is_empty() {
+        writeln!(out)?;
+    }
+    for warning in warnings {
+        writeln!(out, "WARN: {prefix}: {warning}")?;
+    }
+    Ok(())
+}
+
+fn start_text(volume: &Volume) -> String {
+    let lba = volume.extent.start().0;
+    match volume.alignment.start.disk_offset_bytes {
+        0 => format!("LBA {lba}, the start of the disk"),
+        _ => format!(
+            "LBA {lba}, a multiple of {}",
+            exact_size(volume.alignment.start.aligned_to_bytes)
+        ),
+    }
+}
+
+fn alignment_text(alignment: &Alignment) -> String {
+    let data = match alignment.data.disk_offset_bytes {
+        0 => "data area at the start of the disk".to_owned(),
+        offset => format!("data area at {}", exact_size(offset)),
+    };
+    let data_multiple = format!(
+        "a multiple of {}",
+        exact_size(alignment.data.aligned_to_bytes)
+    );
+    match alignment.check {
+        AlignmentCheck::Aligned { boundary } => format!(
+            "ok, {data}, on the {} boundary for {}",
+            exact_size(boundary.bytes),
+            capacity_text(&boundary)
+        ),
+        AlignmentCheck::Misaligned {
+            boundary,
+            misaligned,
+        } => {
+            let what = match misaligned {
+                Misaligned::Start => "the start is",
+                Misaligned::Data => "the data area is",
+                Misaligned::StartAndData => "the start and the data area are",
+            };
+            format!(
+                "off, {what} not on the {} boundary for {}; {data}, {data_multiple}",
+                exact_size(boundary.bytes),
+                capacity_text(&boundary)
+            )
+        }
+        AlignmentCheck::Unknown => {
+            format!("{data}, {data_multiple}; no boundary is known for cards over 2 TiB")
+        }
+    }
+}
+
+fn capacity_text(boundary: &Boundary) -> String {
+    let class = match boundary.capacity_class {
+        CapacityClass::Sdsc => "SDSC",
+        CapacityClass::Sdhc => "SDHC",
+        CapacityClass::Sdxc => "SDXC",
+    };
+    format!("{} {class}", size(boundary.capacity_bytes))
+}
+
+/// An offset or size in the largest binary unit that divides it exactly,
+/// like `4 MiB` or `1080832 bytes`.
+fn exact_size(bytes: u64) -> String {
+    const UNITS: [(u64, &str); 3] = [(1 << 30, "GiB"), (1 << 20, "MiB"), (1 << 10, "KiB")];
+    UNITS
+        .iter()
+        .find(|(unit, _)| bytes > 0 && bytes.is_multiple_of(*unit))
+        .map_or_else(
+            || format!("{bytes} bytes"),
+            |(unit, name)| format!("{} {name}", bytes / unit),
+        )
+}
+
+fn write_fat(fat: &Fat, out: &mut impl Write) -> io::Result<()> {
+    write_label(&fat.label, out)?;
+    sub_line(
+        out,
+        "Volume ID",
+        &fat.volume_id
+            .map_or_else(|| "none".to_owned(), |id| id.to_string()),
+    )?;
+    write_size(
+        fat.size_bytes,
+        fat.cluster_count.into(),
+        "clusters",
+        fat.cluster_size_bytes,
+        out,
+    )?;
+    write_free(&fat.free_bytes, fat.size_bytes, None, out)?;
+    sub_line(out, "Formatter", &fat.oem_name)
+}
+
+fn write_exfat(exfat: &Exfat, out: &mut impl Write) -> io::Result<()> {
+    write_label(&exfat.label, out)?;
+    sub_line(out, "Volume ID", &exfat.volume_id.to_string())?;
+    write_size(
+        exfat.size_bytes,
+        exfat.cluster_count.into(),
+        "clusters",
+        exfat.cluster_size_bytes,
+        out,
+    )?;
+    write_free(&exfat.free_bytes, exfat.size_bytes, None, out)?;
+    sub_line(out, "Revision", &exfat.revision.to_string())
+}
+
+fn write_ext(ext: &Ext, out: &mut impl Write) -> io::Result<()> {
+    write_label(&ext.label, out)?;
+    sub_line(
+        out,
+        "UUID",
+        &ext.uuid
+            .map_or_else(|| "none (revision 0)".to_owned(), |uuid| uuid.to_string()),
+    )?;
+    write_size(
+        ext.size_bytes,
+        ext.block_count,
+        "blocks",
+        ext.block_size_bytes,
+        out,
+    )?;
+    write_free(
+        &ext.free_bytes,
+        ext.size_bytes,
+        Some(ext.reserved_bytes),
+        out,
+    )?;
+    sub_line(
+        out,
+        "Inodes",
+        &format!("{} of {} free", ext.free_inodes, ext.inode_count),
+    )?;
+    write_wrapped("Features", &ext.features.names(), out)?;
+    if let Some(path) = &ext.last_mounted {
+        sub_line(out, "Last mounted", path)?;
+    }
+    Ok(())
+}
+
+fn write_label(label: &Field<Option<String>>, out: &mut impl Write) -> io::Result<()> {
+    let text = match label {
+        Field::Unavailable(reason) => format!("unavailable ({reason})"),
+        Field::Known { value: None, .. } => "none".to_owned(),
+        Field::Known {
+            value: Some(label),
+            source: Source::BootSector,
+        } => format!("{label} (from the boot sector; the root directory has no label)"),
+        Field::Known {
+            value: Some(label), ..
+        } => label.clone(),
+    };
+    sub_line(out, "Label", &text)
+}
+
+fn write_size(
+    bytes: u64,
+    units: u64,
+    unit_name: &str,
+    unit_bytes: u32,
+    out: &mut impl Write,
+) -> io::Result<()> {
+    sub_line(
+        out,
+        "Size",
+        &format!(
+            "{} in {units} {unit_name} of {}",
+            size(bytes),
+            size(unit_bytes.into())
+        ),
+    )
+}
+
+/// Free space and its share of the total; `reserved` is the part only root
+/// may use (ext).
+fn write_free(
+    free: &Field<u64>,
+    total: u64,
+    reserved: Option<u64>,
+    out: &mut impl Write,
+) -> io::Result<()> {
+    let text = match free {
+        Field::Unavailable(reason) => format!("unavailable ({reason})"),
+        Field::Known { value, .. } => {
+            let mut text = size(*value);
+            if total > 0 {
+                let tenths =
+                    (u128::from(*value) * 1000 + u128::from(total) / 2) / u128::from(total);
+                text = format!("{text} ({}.{}%)", tenths / 10, tenths % 10);
+            }
+            if let Some(reserved) = reserved.filter(|&r| r > 0) {
+                text = format!("{text}, {} of it reserved for root", size(reserved));
+            }
+            text
+        }
+    };
+    sub_line(out, "Free", &text)
+}
+
+/// A nested line whose words wrap within [`MAX_WIDTH`], continuation lines
+/// aligned with the first value.
+fn write_wrapped(label: &str, words: &[String], out: &mut impl Write) -> io::Result<()> {
+    let mut lines: Vec<String> = Vec::new();
+    for word in words {
+        match lines.last_mut() {
+            Some(current) if LABEL_WIDTH + current.len() + 1 + word.len() <= MAX_WIDTH => {
+                current.push(' ');
+                current.push_str(word);
+            }
+            _ => lines.push(word.clone()),
+        }
+    }
+    if lines.is_empty() {
+        return sub_line(out, label, "none");
+    }
+    for (i, text) in lines.iter().enumerate() {
+        sub_line(out, if i == 0 { label } else { "" }, text)?;
+    }
+    Ok(())
+}
+
+fn fs_issue_text(issue: &FsIssue) -> String {
+    match issue {
+        FsIssue::NotCleanlyUnmounted => {
+            "the filesystem was not cleanly unmounted; check it with fsck".to_owned()
+        }
+        FsIssue::ErrorsRecorded => {
+            "the filesystem has recorded errors; check it with fsck".to_owned()
+        }
+        FsIssue::FreeCountStale {
+            recorded_bytes,
+            counted_bytes,
+        } => format!(
+            "the stored free space hint ({}) disagrees with the allocation count ({})",
+            size(*recorded_bytes),
+            size(*counted_bytes)
+        ),
+        FsIssue::BootChecksumMismatch => "the boot region checksum does not match".to_owned(),
+        FsIssue::SuperblockChecksumMismatch => "the superblock checksum does not match".to_owned(),
+        FsIssue::LargerThanPartition {
+            filesystem_bytes,
+            partition_bytes,
+        } => format!(
+            "the filesystem ({}) is larger than its partition ({})",
+            size(*filesystem_bytes),
+            size(*partition_bytes)
+        ),
+    }
+}
+
 /// Size in binary units with one decimal, like `64.0 MiB`.
 fn size(bytes: u64) -> String {
     const UNITS: [&str; 6] = ["B", "KiB", "MiB", "GiB", "TiB", "PiB"];
@@ -399,6 +724,14 @@ mod tests {
         assert_eq!(size(64 * 1024 * 1024), "64.0 MiB");
         assert_eq!(size(31_914_983_424), "29.7 GiB");
         assert_eq!(size(u64::MAX), "16384.0 PiB");
+    }
+
+    #[test]
+    fn exact_sizes() {
+        assert_eq!(exact_size(4 << 20), "4 MiB");
+        assert_eq!(exact_size(16 << 10), "16 KiB");
+        assert_eq!(exact_size(1_080_832), "1080832 bytes");
+        assert_eq!(exact_size(0), "0 bytes");
     }
 
     #[test]

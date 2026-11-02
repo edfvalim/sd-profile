@@ -12,3 +12,15 @@ Partition table  MBR, disk signature 0x00000000
   1  primary               63   131039   130977  64.0 MiB  0x0b FAT32 (CHS)
 
 WARN: partition 1 ends at LBA 131039, past the end of the disk (2048 sectors)
+
+Partition 1      FAT32
+  Label          unavailable (read failed: read of 512 bytes at offset 1080832 is past the end of the disk (1048576 bytes))
+  Volume ID      4642-19ED
+  Size           63.0 MiB in 128929 clusters of 512 B
+  Free           59.9 MiB (95.2%)
+  Formatter      BSD  4.4
+  Start          LBA 63, a multiple of 512 bytes
+  Alignment      off, the start and the data area are not on the 8 KiB boundary for 1.0 MiB SDSC; data area at 1080832 bytes, a multiple of 512 bytes
+
+WARN: partition 1: it starts at LBA 63, the old DOS cylinder layout that macOS Disk Utility writes for MBR
+WARN: partition 1: its clusters straddle the 8 KiB boundaries the SD specification recommends for this capacity, which slows writes and wears the card

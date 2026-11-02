@@ -1,0 +1,153 @@
+---
+source: tests/output.rs
+expression: out
+---
+{
+  "schema_version": 1,
+  "target": {
+    "kind": "disk_image",
+    "path": "mbr-fat12-fat16.img"
+  },
+  "layout": {
+    "size_bytes": 33554432,
+    "block_size": 512,
+    "partition_table": {
+      "value": {
+        "scheme": "mbr",
+        "disk_signature": "0x00000000",
+        "partitions": [
+          {
+            "number": 1,
+            "role": "primary",
+            "bootable": false,
+            "type": {
+              "id": "0x01",
+              "name": "FAT12"
+            },
+            "start_lba": 2048,
+            "sectors": 8192,
+            "offset_bytes": 1048576,
+            "size_bytes": 4194304
+          },
+          {
+            "number": 2,
+            "role": "primary",
+            "bootable": false,
+            "type": {
+              "id": "0x06",
+              "name": "FAT16"
+            },
+            "start_lba": 10240,
+            "sectors": 55296,
+            "offset_bytes": 5242880,
+            "size_bytes": 28311552
+          }
+        ],
+        "issues": []
+      },
+      "source": "partition_table"
+    },
+    "volumes": [
+      {
+        "partition": 1,
+        "start_lba": 2048,
+        "sectors": 8192,
+        "offset_bytes": 1048576,
+        "size_bytes": 4194304,
+        "filesystem": {
+          "value": {
+            "type": "fat12",
+            "label": {
+              "value": "SMALL",
+              "source": "root_directory"
+            },
+            "volume_id": "001E-19ED",
+            "oem_name": "BSD  4.4",
+            "sector_size_bytes": 512,
+            "cluster_size_bytes": 1024,
+            "cluster_count": 4067,
+            "size_bytes": 4164608,
+            "free_bytes": {
+              "value": 4164608,
+              "source": "allocation_table"
+            },
+            "data_offset_bytes": 29184,
+            "reserved_sectors": 1,
+            "fat_count": 2,
+            "fat32": null,
+            "issues": []
+          },
+          "source": "boot_sector"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 1048576,
+            "aligned_to_bytes": 1048576
+          },
+          "data": {
+            "disk_offset_bytes": 1077760,
+            "aligned_to_bytes": 512
+          },
+          "dos_cylinder_start": false,
+          "status": "misaligned",
+          "boundary": {
+            "bytes": 16384,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 33554432
+          },
+          "misaligned": "data"
+        }
+      },
+      {
+        "partition": 2,
+        "start_lba": 10240,
+        "sectors": 55296,
+        "offset_bytes": 5242880,
+        "size_bytes": 28311552,
+        "filesystem": {
+          "value": {
+            "type": "fat16",
+            "label": {
+              "value": "MEDIUM",
+              "source": "root_directory"
+            },
+            "volume_id": "40BC-19ED",
+            "oem_name": "BSD  4.4",
+            "sector_size_bytes": 512,
+            "cluster_size_bytes": 2048,
+            "cluster_count": 13788,
+            "size_bytes": 28237824,
+            "free_bytes": {
+              "value": 28237824,
+              "source": "allocation_table"
+            },
+            "data_offset_bytes": 72192,
+            "reserved_sectors": 1,
+            "fat_count": 2,
+            "fat32": null,
+            "issues": []
+          },
+          "source": "boot_sector"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 5242880,
+            "aligned_to_bytes": 1048576
+          },
+          "data": {
+            "disk_offset_bytes": 5315072,
+            "aligned_to_bytes": 512
+          },
+          "dos_cylinder_start": false,
+          "status": "misaligned",
+          "boundary": {
+            "bytes": 16384,
+            "capacity_class": "sdsc",
+            "capacity_bytes": 33554432
+          },
+          "misaligned": "data"
+        }
+      }
+    ]
+  }
+}

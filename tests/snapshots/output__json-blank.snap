@@ -17,6 +17,7 @@ expression: out
         "reason": "blank"
       },
       "source": "partition_table"
-    }
+    },
+    "volumes": []
   }
 }

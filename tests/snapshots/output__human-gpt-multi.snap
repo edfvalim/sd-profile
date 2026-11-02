@@ -6,7 +6,7 @@ Target           gpt-multi.img (disk image)
 Size             128.0 MiB (134217728 bytes)
 Sector size      512 bytes (262144 sectors)
 
-Partition table  GPT, disk GUID E3DF5357-8879-481B-B708-23C984202905
+Partition table  GPT, disk GUID 2E32BC55-D5AA-4E81-BE01-2609AD7B388C
 Header           primary
 Usable sectors   LBA 34 to 262110
 Entry slots      128
@@ -15,3 +15,23 @@ Protective MBR   yes
   #  Start LBA  End LBA  Sectors      Size  Type
   1       2048    79871    77824  38.0 MiB  Microsoft basic data
   2      79872   172031    92160  45.0 MiB  Microsoft basic data
+
+Partition 1      FAT32
+  Label          BOOT
+  Volume ID      5AC8-19EE
+  Size           37.4 MiB in 76594 clusters of 512 B
+  Free           37.4 MiB (100.0%)
+  Formatter      BSD  4.4
+  Start          LBA 2048, a multiple of 1 MiB
+  Alignment      off, the data area is not on the 32 KiB boundary for 128.0 MiB SDSC; data area at 1639 KiB, a multiple of 1 KiB
+
+WARN: partition 1: its clusters straddle the 32 KiB boundaries the SD specification recommends for this capacity, which slows writes and wears the card
+
+Partition 2      exFAT
+  Label          DATA
+  Volume ID      6AE9-08D2
+  Size           44.9 MiB in 11488 clusters of 4.0 KiB
+  Free           44.8 MiB (99.9%)
+  Revision       1.00
+  Start          LBA 79872, a multiple of 1 MiB
+  Alignment      ok, data area at 40064 KiB, on the 32 KiB boundary for 128.0 MiB SDSC

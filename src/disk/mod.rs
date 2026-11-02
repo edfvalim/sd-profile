@@ -1,11 +1,14 @@
-//! On-disk formats: partition tables now, filesystems later. Everything here
-//! reads through [`block::BlockReader`] and has no OS dependencies.
+//! On-disk formats: partition tables and filesystems. Everything here reads
+//! through [`block::BlockReader`] and has no OS dependencies.
 
+pub mod alignment;
 pub mod block;
 mod crc32;
+pub mod fs;
 mod gpt;
 mod mbr;
 pub mod table;
+pub mod volumes;
 
 /// Little-endian integer at `at`. Callers pass slices they have already sized
 /// (sectors, headers, entries), so a short slice is a bug.

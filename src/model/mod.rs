@@ -5,15 +5,20 @@
 //! a platform fills fields in without changing the shape.
 
 mod field;
+mod filesystem;
 mod guid;
 mod layout;
 mod partition_type;
+mod volume;
 
 use std::path::{Path, PathBuf};
 
 use serde::{Serialize, Serializer};
 
 pub use field::{Field, Source, Unavailable};
+pub use filesystem::{
+    Exfat, Ext, ExtFeatures, Fat, Fat32Sectors, Filesystem, FsIssue, Revision, Uuid, VolumeSerial,
+};
 pub use guid::Guid;
 pub use layout::{
     BlockSize, DiskSignature, EbrProblem, Extent, GptAttributes, GptFlag, GptHeaderProblem,
@@ -21,6 +26,9 @@ pub use layout::{
     NoTable, NoTableReason, PartitionNumber, PartitionTable, ProtectiveMbr,
 };
 pub use partition_type::{GptType, MbrType};
+pub use volume::{
+    Alignment, AlignmentCheck, Boundary, CapacityClass, Misaligned, Placement, Volume,
+};
 
 /// Version of the JSON output's shape. Bumped when a key is removed, renamed
 /// or changes type; adding keys does not bump it.

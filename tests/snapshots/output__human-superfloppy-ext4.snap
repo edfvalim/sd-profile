@@ -1,0 +1,21 @@
+---
+source: tests/output.rs
+expression: out
+---
+Target           superfloppy-ext4.img (disk image)
+Size             8.0 MiB (8388608 bytes)
+Sector size      512 bytes (16384 sectors)
+
+Partition table  none, a filesystem starts at sector 0 and spans the whole disk
+
+Whole disk       ext4
+  Label          FLOPPY
+  UUID           d9a467c1-65a5-4da2-b36c-dafd8f4d49be
+  Size           8.0 MiB in 8192 blocks of 1.0 KiB
+  Free           3.4 MiB (42.3%), 409.0 KiB of it reserved for root
+  Inodes         2031 of 2048 free
+  Features       has_journal ext_attr resize_inode dir_index orphan_file
+                 filetype extent 64bit flex_bg metadata_csum_seed sparse_super
+                 large_file huge_file dir_nlink extra_isize metadata_csum
+  Start          LBA 0, the start of the disk
+  Alignment      ok, data area at the start of the disk, on the 8 KiB boundary for 8.0 MiB SDSC

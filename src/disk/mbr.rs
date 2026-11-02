@@ -6,7 +6,7 @@
 //! layout, each describing one logical partition and pointing to the next
 //! record.
 
-use super::{le_u16, le_u32};
+use super::le_u32;
 use crate::model::{Lba, MbrType};
 
 pub const SECTOR_LEN: usize = 512;
@@ -107,46 +107,6 @@ impl BootRecord {
     }
 }
 
-/// Offsets within a FAT, exFAT or NTFS boot sector.
-mod boot_sector {
-    pub const OEM_NAME: std::ops::Range<usize> = 3..11;
-    pub const BYTES_PER_SECTOR: usize = 11;
-    pub const SECTORS_PER_CLUSTER: usize = 13;
-    pub const RESERVED_SECTORS: usize = 14;
-    pub const FAT_COUNT: usize = 16;
-    pub const MEDIA: usize = 21;
-    /// "FAT12   " or "FAT16   " in FAT12/16 boot sectors.
-    pub const FAT16_TYPE: std::ops::Range<usize> = 54..57;
-    /// "FAT32   " in FAT32 boot sectors.
-    pub const FAT32_TYPE: std::ops::Range<usize> = 82..87;
-}
-
-/// Whether the sector is a FAT, exFAT or NTFS boot sector rather than an MBR.
-///
-/// A filesystem written to the whole disk with no partition table puts its
-/// boot sector at sector 0, and that sector also ends in `0x55AA`. This looks
-/// for the filesystem's own markers: the OEM name of exFAT and NTFS, or a
-/// sane FAT BIOS parameter block together with its filesystem type string.
-#[must_use]
-pub fn is_volume_boot_record(sector: &[u8; SECTOR_LEN]) -> bool {
-    use boot_sector as bs;
-    let oem = &sector[bs::OEM_NAME];
-    if oem == b"EXFAT   " || oem == b"NTFS    " {
-        return true;
-    }
-    let jump = (sector[0] == 0xEB && sector[2] == 0x90) || sector[0] == 0xE9;
-    let media = sector[bs::MEDIA];
-    let bpb_ok = matches!(
-        le_u16(sector, bs::BYTES_PER_SECTOR),
-        512 | 1024 | 2048 | 4096
-    ) && sector[bs::SECTORS_PER_CLUSTER].is_power_of_two()
-        && le_u16(sector, bs::RESERVED_SECTORS) >= 1
-        && (1..=2).contains(&sector[bs::FAT_COUNT])
-        && (media == 0xF0 || media >= 0xF8);
-    let type_string = sector[bs::FAT16_TYPE] == *b"FAT" || sector[bs::FAT32_TYPE] == *b"FAT32";
-    jump && bpb_ok && type_string
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -208,29 +168,5 @@ mod tests {
     fn invalid_status_detected() {
         let record = BootRecord::parse(&sector_with_entry(1, 0x12, 0x83, 1, 1)).unwrap();
         assert!(!record.has_valid_status());
-    }
-
-    #[test]
-    fn detects_fat32_boot_sector() {
-        assert!(is_volume_boot_record(&sector0(&fixture_image(
-            "superfloppy-fat32"
-        ))));
-    }
-
-    #[test]
-    fn detects_exfat_boot_sector() {
-        let mut s = [0u8; 512];
-        s[3..11].copy_from_slice(b"EXFAT   ");
-        assert!(is_volume_boot_record(&s));
-    }
-
-    #[test]
-    fn mbr_is_not_a_boot_sector() {
-        for name in ["mbr-fat32", "mbr-sd-aligned", "mbr-extended", "gpt-exfat"] {
-            assert!(
-                !is_volume_boot_record(&sector0(&fixture_image(name))),
-                "{name}"
-            );
-        }
     }
 }

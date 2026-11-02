@@ -9,13 +9,16 @@
 //!    falls back to the backup copy.
 //! 2. A filesystem boot sector at sector 0 (no partition table).
 //! 3. An MBR, including the logical partitions of an extended partition.
-//! 4. Otherwise none: blank, or unrecognized.
+//! 4. An ext superblock at byte 1024: ext on the whole disk, which leaves
+//!    sector 0 without a boot sector (usually all zeros).
+//! 5. Otherwise none: blank, or unrecognized.
 
 use std::collections::HashSet;
 
 use super::block::{BlockReader, ReadError};
+use super::fs;
 use super::gpt;
-use super::mbr::{self, BootRecord, SECTOR_LEN};
+use super::mbr::{BootRecord, SECTOR_LEN};
 use crate::model::{
     BlockSize, DiskSignature, EbrProblem, Extent, GptHeaderProblem, GptPartition, GptTable,
     HeaderCopy, Issue, Lba, MbrPartition, MbrRole, MbrTable, NoTable, NoTableReason,
@@ -66,7 +69,7 @@ pub fn read(disk: &mut impl BlockReader) -> Result<PartitionTable, ReadError> {
         issues.push(Issue::StaleGpt);
     }
 
-    if mbr::is_volume_boot_record(&sector0) {
+    if fs::is_boot_sector(&sector0) {
         return Ok(no_table(NoTableReason::WholeDiskFilesystem));
     }
     if let Some(record) = record.filter(BootRecord::has_valid_status) {
@@ -75,7 +78,9 @@ pub fn read(disk: &mut impl BlockReader) -> Result<PartitionTable, ReadError> {
         table.issues = issues;
         return Ok(PartitionTable::Mbr(table));
     }
-    let reason = if sector0.iter().all(|&b| b == 0) {
+    let reason = if fs::has_ext_superblock(disk)? {
+        NoTableReason::WholeDiskFilesystem
+    } else if sector0.iter().all(|&b| b == 0) {
         NoTableReason::Blank
     } else {
         NoTableReason::Unrecognized
@@ -751,6 +756,7 @@ mod tests {
         for (name, reason) in [
             ("blank", NoTableReason::Blank),
             ("superfloppy-fat32", NoTableReason::WholeDiskFilesystem),
+            ("superfloppy-ext4", NoTableReason::WholeDiskFilesystem),
         ] {
             assert_eq!(
                 table(fixture_image(name)),

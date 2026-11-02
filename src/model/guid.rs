@@ -15,6 +15,13 @@ pub struct Guid([u8; 16]);
 impl Guid {
     pub const NIL: Self = Self([0; 16]);
 
+    /// Builds a GUID from bytes in the order they are written (RFC 4122, as
+    /// ext stores its UUIDs).
+    #[must_use]
+    pub const fn from_bytes(bytes: [u8; 16]) -> Self {
+        Self(bytes)
+    }
+
     /// Builds a GUID from its on-disk GPT form, where the first three groups
     /// are little-endian.
     #[must_use]

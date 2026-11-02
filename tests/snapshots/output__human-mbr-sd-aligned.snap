@@ -11,3 +11,24 @@ Partition table  MBR, disk signature 0x00000000
   #  Role     Boot  Start LBA  End LBA  Sectors      Size  Type
   1  primary  *          8192   139263   131072  64.0 MiB  0x0c FAT32 (LBA)
   2  primary           139264   262143   122880  60.0 MiB  0x83 Linux
+
+Partition 1      FAT32
+  Label          BOOT
+  Volume ID      8093-19ED
+  Size           63.0 MiB in 129022 clusters of 512 B
+  Free           63.0 MiB (100.0%)
+  Formatter      BSD  4.4
+  Start          LBA 8192, a multiple of 4 MiB
+  Alignment      ok, data area at 5 MiB, on the 32 KiB boundary for 128.0 MiB SDSC
+
+Partition 2      ext4
+  Label          rootfs
+  UUID           d97db754-2e18-42d0-95c1-c9dd9ae14f64
+  Size           60.0 MiB in 15360 blocks of 4.0 KiB
+  Free           49.0 MiB (81.7%), 3.0 MiB of it reserved for root
+  Inodes         15343 of 15360 free
+  Features       has_journal ext_attr resize_inode dir_index orphan_file
+                 filetype extent 64bit flex_bg metadata_csum_seed sparse_super
+                 large_file huge_file dir_nlink extra_isize metadata_csum
+  Start          LBA 139264, a multiple of 4 MiB
+  Alignment      ok, data area at 68 MiB, on the 32 KiB boundary for 128.0 MiB SDSC

@@ -14,3 +14,48 @@ Partition table  MBR, disk signature 0x00000000
   3  primary            109557   140812    31256  15.3 MiB  0x07 NTFS or exFAT
   4  extended           140813   218995    78183  38.2 MiB  0x05 Extended (CHS)
   5  logical            140868   218995    78128  38.1 MiB  0x0b FAT32 (CHS)
+
+Partition 1      FAT32
+  Label          ONE
+  Volume ID      41EB-19ED
+  Size           37.5 MiB in 76894 clusters of 512 B
+  Free           37.5 MiB (100.0%)
+  Formatter      BSD  4.4
+  Start          LBA 63, a multiple of 512 bytes
+  Alignment      off, the start and the data area are not on the 32 KiB boundary for 128.0 MiB SDSC; data area at 664064 bytes, a multiple of 512 bytes
+
+WARN: partition 1: it starts at LBA 63, the old DOS cylinder layout that macOS Disk Utility writes for MBR
+WARN: partition 1: its clusters straddle the 32 KiB boundaries the SD specification recommends for this capacity, which slows writes and wears the card
+
+Partition 2      FAT16
+  Label          TWO
+  Volume ID      8A69-19ED
+  Size           15.2 MiB in 15550 clusters of 1.0 KiB
+  Free           15.2 MiB (100.0%)
+  Formatter      BSD  4.4
+  Start          LBA 78246, a multiple of 1 KiB
+  Alignment      off, the data area is not on the 32 KiB boundary for 128.0 MiB SDSC; data area at 40141312 bytes, a multiple of 512 bytes
+
+WARN: partition 2: its clusters straddle the 32 KiB boundaries the SD specification recommends for this capacity, which slows writes and wears the card
+
+Partition 3      exFAT
+  Label          THREE
+  Volume ID      6AE9-08CB
+  Size           15.1 MiB in 3875 clusters of 4.0 KiB
+  Free           15.1 MiB (99.8%)
+  Revision       1.00
+  Start          LBA 109557, a multiple of 512 bytes
+  Alignment      off, the start and the data area are not on the 32 KiB boundary for 128.0 MiB SDSC; data area at 56224256 bytes, a multiple of 512 bytes
+
+WARN: partition 3: its clusters straddle the 32 KiB boundaries the SD specification recommends for this capacity, which slows writes and wears the card
+
+Partition 5      FAT32
+  Label          FOUR
+  Volume ID      C923-19ED
+  Size           37.5 MiB in 76894 clusters of 512 B
+  Free           37.5 MiB (100.0%)
+  Formatter      BSD  4.4
+  Start          LBA 140868, a multiple of 2 KiB
+  Alignment      off, the start and the data area are not on the 32 KiB boundary for 128.0 MiB SDSC; data area at 71051 KiB, a multiple of 1 KiB
+
+WARN: partition 5: its clusters straddle the 32 KiB boundaries the SD specification recommends for this capacity, which slows writes and wears the card

@@ -1,0 +1,35 @@
+---
+source: tests/output.rs
+expression: out
+---
+Target           mbr-fat12-fat16.img (disk image)
+Size             32.0 MiB (33554432 bytes)
+Sector size      512 bytes (65536 sectors)
+
+Partition table  MBR, disk signature 0x00000000
+
+  #  Role     Boot  Start LBA  End LBA  Sectors      Size  Type
+  1  primary             2048    10239     8192   4.0 MiB  0x01 FAT12
+  2  primary            10240    65535    55296  27.0 MiB  0x06 FAT16
+
+Partition 1      FAT12
+  Label          SMALL
+  Volume ID      001E-19ED
+  Size           4.0 MiB in 4067 clusters of 1.0 KiB
+  Free           4.0 MiB (100.0%)
+  Formatter      BSD  4.4
+  Start          LBA 2048, a multiple of 1 MiB
+  Alignment      off, the data area is not on the 16 KiB boundary for 32.0 MiB SDSC; data area at 1077760 bytes, a multiple of 512 bytes
+
+WARN: partition 1: its clusters straddle the 16 KiB boundaries the SD specification recommends for this capacity, which slows writes and wears the card
+
+Partition 2      FAT16
+  Label          MEDIUM
+  Volume ID      40BC-19ED
+  Size           26.9 MiB in 13788 clusters of 2.0 KiB
+  Free           26.9 MiB (100.0%)
+  Formatter      BSD  4.4
+  Start          LBA 10240, a multiple of 1 MiB
+  Alignment      off, the data area is not on the 16 KiB boundary for 32.0 MiB SDSC; data area at 5315072 bytes, a multiple of 512 bytes
+
+WARN: partition 2: its clusters straddle the 16 KiB boundaries the SD specification recommends for this capacity, which slows writes and wears the card

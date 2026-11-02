@@ -7,3 +7,12 @@ Size             64.0 MiB (67108864 bytes)
 Sector size      512 bytes (131072 sectors)
 
 Partition table  none, a filesystem starts at sector 0 and spans the whole disk
+
+Whole disk       FAT32
+  Label          FLOPPY
+  Volume ID      F26A-19EE
+  Size           63.0 MiB in 129022 clusters of 512 B
+  Free           63.0 MiB (100.0%)
+  Formatter      BSD  4.4
+  Start          LBA 0, the start of the disk
+  Alignment      ok, data area at 1 MiB, on the 16 KiB boundary for 64.0 MiB SDSC

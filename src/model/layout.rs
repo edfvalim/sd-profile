@@ -1,4 +1,4 @@
-//! The disk's layout: size, sector size and partition table.
+//! The disk's layout: size, sector size, partition table and volumes.
 
 use std::fmt;
 
@@ -8,6 +8,7 @@ use serde::ser::{SerializeMap, Serializer};
 use super::field::Field;
 use super::guid::Guid;
 use super::partition_type::{GptType, MbrType};
+use super::volume::Volume;
 
 /// Logical block (sector) size in bytes: a power of two, at least 512.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
@@ -137,12 +138,16 @@ impl fmt::Display for PartitionNumber {
     }
 }
 
-/// Size, sector size and partition table of the target.
+/// Size, sector size, partition table and volumes of the target.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Layout {
     pub size_bytes: u64,
     pub block_size: BlockSize,
     pub partition_table: Field<PartitionTable>,
+    /// The data partitions in table order (extended partitions hold no data
+    /// and are left out), or the whole disk when a filesystem spans it.
+    /// Empty when the partition table is unavailable.
+    pub volumes: Vec<Volume>,
 }
 
 impl Layout {
