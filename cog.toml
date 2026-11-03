@@ -1,6 +1,13 @@
 tag_prefix = "v"
 ignore_merge_commits = true
 
+# Run before the bump commit, so the version in Cargo.toml (the first
+# top-level `version =` line, the package's) and Cargo.lock follow the tag.
+pre_bump_hooks = [
+  "perl -pi -e '$done ||= s/^version = \"[^\"]*\"/version = \"{{version}}\"/' Cargo.toml",
+  "cargo update --workspace --offline",
+]
+
 [changelog]
 path = "CHANGELOG.md"
 

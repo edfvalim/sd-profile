@@ -6,6 +6,9 @@ rust-version = "1.98"
 description = "Profile SD and microSD cards: identity, speed, reader, partitions, filesystems and mounts"
 license = "MIT"
 readme = "README.md"
+repository = "https://github.com/edfvalim/sd-profile"
+keywords = ["sd-card", "microsd", "partition", "filesystem", "macos"]
+categories = ["command-line-utilities", "filesystem", "hardware-support"]
 publish = false
 
 [dependencies]

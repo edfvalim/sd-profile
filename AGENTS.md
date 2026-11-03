@@ -76,3 +76,11 @@ Human-readable output can change freely.
 The version in `Cargo.toml`, `CHANGELOG.md` and the tags come only from
 `cog bump`: `cog bump --auto` for a release, `cog bump --auto --pre "rc.*"`
 for a release candidate. Releases happen when the user asks for one.
+
+`cog bump` runs on a clean `main`: its pre-bump hooks set the version in
+`Cargo.toml` and `Cargo.lock`, then it commits `chore(version): vX.Y.Z`
+(cog's fixed message, the one exception to the scope list) and tags it.
+Push both with `git push origin main --follow-tags`. The tag starts
+`.github/workflows/release.yml`, which builds the Apple silicon and Intel
+binaries and publishes a GitHub release with the tag's `CHANGELOG.md`
+section as notes (a pre-release for `-rc.N` tags).

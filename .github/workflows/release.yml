@@ -1,0 +1,67 @@
+# Builds the macOS binaries for a version tag pushed by `cog bump` and
+# attaches them to a GitHub release, with the tag's changelog section as
+# the notes. Tags with a pre-release part (v0.1.0-rc.1) make pre-releases.
+name: release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: build ${{ matrix.target }}
+    # Apple silicon runner; the Intel binary is cross-compiled on it.
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        target: [aarch64-apple-darwin, x86_64-apple-darwin]
+    steps:
+      - uses: actions/checkout@v7
+      # rustup installs the toolchain pinned in rust-toolchain.toml.
+      - run: rustup target add ${{ matrix.target }}
+      - run: cargo test --locked
+        if: matrix.target == 'aarch64-apple-darwin'
+      - run: cargo build --release --locked --target ${{ matrix.target }}
+      - name: package
+        run: |
+          name="sd-profile-${GITHUB_REF_NAME}-${{ matrix.target }}"
+          mkdir "$name"
+          cp "target/${{ matrix.target }}/release/sd-profile" README.md LICENSE "$name/"
+          tar -czf "$name.tar.gz" "$name"
+          shasum -a 256 "$name.tar.gz" > "$name.tar.gz.sha256"
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.target }}
+          path: sd-profile-*.tar.gz*
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
+        with:
+          path: dist
+          merge-multiple: true
+      - name: release notes from CHANGELOG.md
+        run: |
+          # The section cog wrote for this tag, up to the next separator.
+          awk -v tag="## ${GITHUB_REF_NAME} " '
+            index($0, tag) == 1 { found = 1; next }
+            found && /^- - -/ { exit }
+            found { print }
+          ' CHANGELOG.md > notes.md
+          test -s notes.md || echo "See CHANGELOG.md." > notes.md
+      - name: create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          pre=""
+          case "$GITHUB_REF_NAME" in *-*) pre="--prerelease" ;; esac
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "$GITHUB_REF_NAME" --notes-file notes.md --verify-tag $pre
