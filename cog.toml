@@ -3,6 +3,13 @@ ignore_merge_commits = true
 
 # Run before the bump commit, so the version in Cargo.toml (the first
 # top-level `version =` line, the package's) and Cargo.lock follow the tag.
+# cog's built-in signing can't use the 1Password SSH key that git signs
+# with, so git makes the bump commit and the tag is moved onto it.
+disable_bump_commit = true
+post_bump_hooks = [
+  "git commit -m \"chore(version): v{{version}}\"",
+  "git tag -f v{{version}}",
+]
 pre_bump_hooks = [
   "perl -pi -e '$done ||= s/^version = \"[^\"]*\"/version = \"{{version}}\"/' Cargo.toml",
   "cargo update --workspace --offline",

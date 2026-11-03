@@ -78,8 +78,10 @@ The version in `Cargo.toml`, `CHANGELOG.md` and the tags come only from
 for a release candidate. Releases happen when the user asks for one.
 
 `cog bump` runs on a clean `main`: its pre-bump hooks set the version in
-`Cargo.toml` and `Cargo.lock`, then it commits `chore(version): vX.Y.Z`
-(cog's fixed message, the one exception to the scope list) and tags it.
+`Cargo.toml` and `Cargo.lock`; its post-bump hooks commit them with git as
+`chore(version): vX.Y.Z` (the one exception to the scope list) and move
+cog's tag onto that commit. git, not cog, makes the commit because cog's
+own signing can't use the 1Password SSH key.
 Push both with `git push origin main --follow-tags`. The tag starts
 `.github/workflows/release.yml`, which builds the Apple silicon and Intel
 binaries and publishes a GitHub release with the tag's `CHANGELOG.md`
