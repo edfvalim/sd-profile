@@ -348,14 +348,14 @@ fn build_mbr(
         });
     }
 
-    let containers: Vec<Extent> = found
+    let containers: Vec<_> = found
         .partitions
         .iter()
         .filter(|p| p.role == MbrRole::Extended)
-        .map(|p| p.extent)
+        .map(|p| (p.number, p.extent))
         .collect();
-    for container in containers {
-        read_logical(disk, container, geometry, &mut found)?;
+    for (extended, container) in containers {
+        read_logical(disk, extended, container, geometry, &mut found)?;
     }
 
     let MbrPartitions {
@@ -382,9 +382,11 @@ fn build_mbr(
 }
 
 /// Walks the EBR chain of one extended partition, adding its logical
-/// partitions to `found`.
+/// partitions to `found`. A logical partition that extends outside the
+/// container is kept and reported.
 fn read_logical(
     disk: &mut impl BlockReader,
+    extended: PartitionNumber,
     container: Extent,
     geometry: Geometry,
     found: &mut MbrPartitions,
@@ -416,15 +418,25 @@ fn read_logical(
 
         let [logical, next, ..] = ebr.entries;
         if logical.is_used() {
+            let extent = geometry.extent(
+                ebr_lba.saturating_add(u64::from(logical.start)),
+                u64::from(logical.sectors),
+            );
+            // An empty one is reported as such by `extent_issues`.
+            if extent.sectors() > 0
+                && (extent.start() < container.start() || extent.end() > container.end())
+            {
+                found.issues.push(Issue::OutsideExtended {
+                    partition: found.next_logical,
+                    extended,
+                });
+            }
             found.partitions.push(MbrPartition {
                 number: found.next_logical,
                 role: MbrRole::Logical,
                 bootable: logical.is_bootable(),
                 partition_type: logical.partition_type,
-                extent: geometry.extent(
-                    ebr_lba.saturating_add(u64::from(logical.start)),
-                    u64::from(logical.sectors),
-                ),
+                extent,
             });
             found.next_logical = found.next_logical.next();
         }
@@ -473,6 +485,7 @@ fn issue_order(issue: &Issue) -> PartitionNumber {
         Issue::PastEndOfDisk { partition, .. }
         | Issue::EmptyOrReversed { partition }
         | Issue::OutsideUsableRange { partition }
+        | Issue::OutsideExtended { partition, .. }
         | Issue::Overlap {
             first: partition, ..
         } => *partition,
@@ -822,6 +835,30 @@ mod tests {
             ]
         );
         assert!(t.issues.is_empty(), "{:?}", t.issues);
+    }
+
+    #[test]
+    fn logical_outside_extended_is_reported() {
+        let mut image = vec![0; 8192 * 512];
+        entry(&mut image, 0, 0x0F, 1000, 3000);
+        // The logical partition runs 510 sectors past the extended one's end.
+        let ebr = 1000 * 512;
+        entry(&mut image[ebr..ebr + 512], 0, 0x83, 10, 3500);
+        let t = mbr_table(image);
+        assert_eq!(
+            summary(&t),
+            [
+                (1, MbrRole::Extended, 0x0F, 1000, 3000),
+                (5, MbrRole::Logical, 0x83, 1010, 3500),
+            ]
+        );
+        assert_eq!(
+            t.issues,
+            [Issue::OutsideExtended {
+                partition: p(5),
+                extended: p(1)
+            }]
+        );
     }
 
     #[test]

@@ -3,13 +3,14 @@
 
 mod device;
 
+use std::borrow::Cow;
 use std::io::{self, Write};
 
 use crate::model::{
     Alignment, AlignmentCheck, Boundary, CapacityClass, EbrProblem, Exfat, Ext, Extent, Fat, Field,
     Filesystem, FsIssue, GptFlag, GptHeaderProblem, GptPartition, GptTable, HeaderCopy, Issue,
-    Layout, MbrPartition, MbrRole, MbrTable, Misaligned, NoTableReason, PartitionTable, Profile,
-    ProtectiveMbr, Source, Target, Volume,
+    Layout, MbrPartition, MbrRole, MbrTable, Misaligned, Mount, NoTableReason, PartitionTable,
+    Profile, ProtectiveMbr, Source, Target, Volume,
 };
 
 const LABEL_WIDTH: usize = 17;
@@ -33,7 +34,13 @@ pub fn write(profile: &Profile, out: &mut impl Write) -> io::Result<()> {
         }
         Target::Device { .. } => device::write(profile, out)?,
     }
-    write_layout(&profile.layout, out)
+    // Images have no mounts to show; a device whose mount table couldn't
+    // be read says so in its mounts section.
+    let mounts = match &profile.target {
+        Target::DiskImage { .. } => None,
+        Target::Device { .. } => profile.mounts.value().map(Vec::as_slice),
+    };
+    write_layout(&profile.layout, mounts, out)
 }
 
 /// A field's value through `show`, or why it is unavailable.
@@ -45,22 +52,64 @@ fn shown<T>(field: &Field<T>, show: impl FnOnce(&T) -> String) -> String {
 }
 
 fn line(out: &mut impl Write, label: &str, value: &str) -> io::Result<()> {
+    let (label, value) = (printable(label), printable(value));
     writeln!(out, "{label:<LABEL_WIDTH$}{value}")
 }
 
 /// A line nested under a heading line, its value aligned with top-level
 /// values.
 fn sub_line(out: &mut impl Write, label: &str, value: &str) -> io::Result<()> {
+    let (label, value) = (printable(label), printable(value));
     writeln!(out, "  {label:<SUB_LABEL_WIDTH$}{value}")
 }
 
-fn write_layout(layout: &Layout, out: &mut impl Write) -> io::Result<()> {
+/// `text` with control characters and bidirectional overrides escaped
+/// (`\u{1b}`). Labels, partition names and mount points come from the card
+/// and could otherwise move the cursor, recolour the terminal or reorder
+/// the line they are on.
+fn printable(text: &str) -> Cow<'_, str> {
+    let unsafe_char =
+        |c: char| c.is_control() || matches!(c, '\u{202a}'..='\u{202e}' | '\u{2066}'..='\u{2069}');
+    if !text.contains(unsafe_char) {
+        return Cow::Borrowed(text);
+    }
+    Cow::Owned(
+        text.chars()
+            .map(|c| {
+                if unsafe_char(c) {
+                    c.escape_unicode().to_string()
+                } else {
+                    c.to_string()
+                }
+            })
+            .collect(),
+    )
+}
+
+/// The layout sections. `mounts` is `None` when they aren't known, as for
+/// a disk image.
+fn write_layout(layout: &Layout, mounts: Option<&[Mount]>, out: &mut impl Write) -> io::Result<()> {
     write_table_section(layout, out)?;
     for volume in &layout.volumes {
         writeln!(out)?;
-        write_volume(volume, out)?;
+        let state = match mounts {
+            None => MountState::Unknown,
+            Some(mounts) => match mounts.iter().find(|m| m.partition == volume.partition) {
+                Some(mount) => MountState::At(mount),
+                None => MountState::NotMounted,
+            },
+        };
+        write_volume(volume, &state, out)?;
     }
     Ok(())
+}
+
+/// Whether a volume is mounted, as far as the report knows.
+enum MountState<'a> {
+    /// No mount table: a disk image, or a table that couldn't be read.
+    Unknown,
+    NotMounted,
+    At(&'a Mount),
 }
 
 fn write_table_section(layout: &Layout, out: &mut impl Write) -> io::Result<()> {
@@ -272,6 +321,10 @@ fn issue_text(issue: &Issue) -> String {
         Issue::OutsideUsableRange { partition } => {
             format!("partition {partition} lies outside the GPT's usable sectors")
         }
+        Issue::OutsideExtended {
+            partition,
+            extended,
+        } => format!("logical partition {partition} extends outside extended partition {extended}"),
         Issue::GptHeader { copy, problem } => format!(
             "{} GPT header is unusable: {}",
             copy_name(*copy),
@@ -328,7 +381,7 @@ fn gpt_problem_text(problem: GptHeaderProblem) -> &'static str {
     }
 }
 
-fn write_volume(volume: &Volume, out: &mut impl Write) -> io::Result<()> {
+fn write_volume(volume: &Volume, mount: &MountState<'_>, out: &mut impl Write) -> io::Result<()> {
     let name = match volume.partition {
         Some(number) => format!("Partition {number}"),
         None => "Whole disk".to_owned(),
@@ -359,6 +412,22 @@ fn write_volume(volume: &Volume, out: &mut impl Write) -> io::Result<()> {
             value.issues()
         }
     };
+    match mount {
+        MountState::Unknown => {}
+        MountState::NotMounted => sub_line(out, "Mounted", "no")?,
+        MountState::At(mount) => {
+            let access = if mount.is_read_only() {
+                "read-only"
+            } else {
+                "read-write"
+            };
+            sub_line(
+                out,
+                "Mounted",
+                &format!("{} ({access})", mount.mount_point.display()),
+            )?;
+        }
+    }
     sub_line(out, "Start", &start_text(volume))?;
     sub_line(out, "Alignment", &alignment_text(&volume.alignment))?;
 
@@ -695,6 +764,15 @@ impl Column {
 /// Writes rows under column titles, indented two spaces, columns two spaces
 /// apart.
 fn write_table(out: &mut impl Write, columns: &[Column], rows: &[Vec<String>]) -> io::Result<()> {
+    let rows: Vec<Vec<String>> = rows
+        .iter()
+        .map(|row| {
+            row.iter()
+                .map(|cell| printable(cell).into_owned())
+                .collect()
+        })
+        .collect();
+    let rows = rows.as_slice();
     let shown: Vec<(usize, &Column, usize)> = columns
         .iter()
         .enumerate()
@@ -728,6 +806,27 @@ fn write_table(out: &mut impl Write, columns: &[Column], rows: &[Vec<String>]) -
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn card_text_cannot_drive_the_terminal() {
+        assert_eq!(printable("BOOTFS"), "BOOTFS");
+        assert_eq!(printable("caf\u{e9}"), "caf\u{e9}");
+        assert_eq!(printable("A\u{1b}[2JB"), "A\\u{1b}[2JB");
+        assert_eq!(printable("a\nb"), "a\\u{a}b");
+        assert_eq!(printable("x\u{202e}y"), "x\\u{202e}y");
+    }
+
+    #[test]
+    fn table_cells_are_escaped() {
+        let mut out = Vec::new();
+        write_table(
+            &mut out,
+            &[Column::left("Name")],
+            &[vec!["a\u{7}b".to_owned()]],
+        )
+        .unwrap();
+        assert_eq!(String::from_utf8(out).unwrap(), "  Name\n  a\\u{7}b\n");
+    }
 
     #[test]
     fn sizes() {

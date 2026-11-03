@@ -87,6 +87,8 @@ pub struct Superblock {
     features: ExtFeatures,
     block_size: u32,
     block_count: u64,
+    /// `block_count` blocks in bytes, which `parse` checks fits in a `u64`.
+    size_bytes: u64,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -99,7 +101,8 @@ enum ExtType {
 impl Superblock {
     /// Parses the superblock at the start of `bytes`, which holds at least
     /// [`SUPERBLOCK_LEN`] bytes; `None` without the magic number or with
-    /// geometry no ext volume has.
+    /// geometry no ext volume has, including a size no byte count holds and
+    /// more reserved blocks than blocks.
     pub fn parse(bytes: &[u8]) -> Option<Self> {
         let bytes = &bytes[..SUPERBLOCK_LEN];
         if le_u16(bytes, sb::MAGIC) != MAGIC {
@@ -121,17 +124,34 @@ impl Superblock {
         };
         let log_block_size = le_u32(bytes, sb::LOG_BLOCK_SIZE);
         let wide = features.incompat & INCOMPAT_64BIT != 0;
+        if log_block_size > 6 {
+            return None;
+        }
+        let block_size: u32 = 1024 << log_block_size;
         let block_count = split_u64(bytes, sb::BLOCKS_COUNT_LO, sb::BLOCKS_COUNT_HI, wide);
-        let valid = log_block_size <= 6
-            && le_u32(bytes, sb::BLOCKS_PER_GROUP) > 0
+        let reserved = split_u64(bytes, sb::R_BLOCKS_COUNT_LO, sb::R_BLOCKS_COUNT_HI, wide);
+        let size_bytes = block_count.checked_mul(u64::from(block_size))?;
+        let valid = le_u32(bytes, sb::BLOCKS_PER_GROUP) > 0
             && le_u32(bytes, sb::INODES_PER_GROUP) > 0
-            && block_count > u64::from(le_u32(bytes, sb::FIRST_DATA_BLOCK));
+            && block_count > u64::from(le_u32(bytes, sb::FIRST_DATA_BLOCK))
+            && reserved <= block_count;
         valid.then(|| Self {
             bytes: bytes.to_vec(),
             features,
-            block_size: 1024 << log_block_size,
+            block_size,
             block_count,
+            size_bytes,
         })
+    }
+
+    /// `blocks` in bytes. Counts other than the block count come from the
+    /// disk unchecked, so the product can overflow.
+    fn blocks_to_bytes(&self, blocks: u64) -> Result<u64, MetadataError> {
+        blocks
+            .checked_mul(u64::from(self.block_size))
+            .ok_or(MetadataError::Inconsistent(
+                "a block count is too large to be a byte count",
+            ))
     }
 
     fn is_dynamic(&self) -> bool {
@@ -200,7 +220,6 @@ pub(super) fn read<R: BlockReader>(
     let Some(ext_type) = superblock.ext_type() else {
         return Filesystem::Unrecognized;
     };
-    let block_size = u64::from(superblock.block_size);
     let mut issues = Vec::new();
 
     let state = le_u16(&superblock.bytes, sb::STATE);
@@ -216,23 +235,31 @@ pub(super) fn read<R: BlockReader>(
 
     let recorded_free = superblock.wide(sb::FREE_BLOCKS_COUNT_LO, sb::FREE_BLOCKS_COUNT_HI);
     let free_bytes = if superblock.features.incompat & INCOMPAT_META_BG == 0 {
-        let counted = free_blocks_in_groups(volume, superblock);
-        if let Ok(counted) = counted
+        let counted = free_blocks_in_groups(volume, superblock)
+            .and_then(|n| Ok((n, superblock.blocks_to_bytes(n)?)));
+        if let Ok((counted, counted_bytes)) = counted
             && counted != recorded_free
         {
             issues.push(FsIssue::FreeCountStale {
-                recorded_bytes: recorded_free * block_size,
-                counted_bytes: counted * block_size,
+                // A hint too large for bytes is stale all the same; the
+                // largest byte count stands in for it.
+                recorded_bytes: superblock
+                    .blocks_to_bytes(recorded_free)
+                    .unwrap_or(u64::MAX),
+                counted_bytes,
             });
         }
-        field(counted.map(|n| n * block_size), Source::GroupDescriptors)
+        field(counted.map(|(_, bytes)| bytes), Source::GroupDescriptors)
     } else {
         // With meta_bg the descriptors are spread over the volume; the
         // superblock's count is the one value at hand.
-        Field::known(recorded_free * block_size, Source::Superblock)
+        field(
+            superblock.blocks_to_bytes(recorded_free),
+            Source::Superblock,
+        )
     };
 
-    let filesystem_bytes = superblock.block_count * block_size;
+    let filesystem_bytes = superblock.size_bytes;
     issues.extend(volume.size_issue(filesystem_bytes));
 
     let ext = Ext {
@@ -251,7 +278,10 @@ pub(super) fn read<R: BlockReader>(
         block_count: superblock.block_count,
         size_bytes: filesystem_bytes,
         free_bytes,
-        reserved_bytes: superblock.wide(sb::R_BLOCKS_COUNT_LO, sb::R_BLOCKS_COUNT_HI) * block_size,
+        // `parse` checks there are no more reserved blocks than blocks, so
+        // this is at most the size.
+        reserved_bytes: superblock.wide(sb::R_BLOCKS_COUNT_LO, sb::R_BLOCKS_COUNT_HI)
+            * u64::from(superblock.block_size),
         inode_count: superblock.u32_at(sb::INODES_COUNT),
         free_inodes: superblock.u32_at(sb::FREE_INODES_COUNT),
         last_mounted: superblock.dynamic_string(sb::LAST_MOUNTED),
@@ -280,12 +310,13 @@ fn free_blocks_in_groups<R: BlockReader>(
     } else {
         gd::MIN_LEN
     };
-    let table_len = groups * desc_len as u64;
-    if table_len > MAX_DESCRIPTOR_TABLE {
-        return Err(MetadataError::Inconsistent(
+    let table_len = groups
+        .checked_mul(desc_len as u64)
+        .filter(|&len| len <= MAX_DESCRIPTOR_TABLE)
+        .ok_or(MetadataError::Inconsistent(
             "the block group count implies a descriptor table over 64 MiB",
-        ));
-    }
+        ))?;
+    // At most 2^32 blocks of 64 KiB: no overflow.
     let offset = (first_data_block + 1) * u64::from(superblock.block_size);
     let table = volume.read(offset, usize::try_from(table_len).expect("bounded above"))?;
     Ok(table
@@ -312,6 +343,7 @@ fn c_string(bytes: &[u8]) -> Option<String> {
 mod tests {
     use super::*;
     use crate::disk::fs::tests::{extent, read_volume, sector_of};
+    use crate::model::Unavailable;
     use crate::test_support::{fixture_image, reader};
 
     fn ext(field: Field<Filesystem>) -> (&'static str, Ext) {
@@ -410,16 +442,122 @@ mod tests {
         assert_eq!(free(&e).0, 3466 * 1024);
     }
 
+    /// The ext4 partition of `mbr-ext` with its bytes changed by `edit`.
+    fn edited_ext4_volume(edit: impl FnOnce(&mut [u8])) -> Field<Filesystem> {
+        let mut image = fixture_image("mbr-ext");
+        edit(&mut image[sector_of(83968)..sector_of(83968 + 40960)]);
+        crate::disk::fs::read(&mut reader(image), extent(83968, 40960))
+    }
+
     /// The ext4 partition of `mbr-ext` with its superblock changed by `edit`.
     fn edited_ext4(edit: impl FnOnce(&mut [u8])) -> Ext {
-        let mut image = fixture_image("mbr-ext");
-        let at = sector_of(83968) + SUPERBLOCK_OFFSET;
-        edit(&mut image[at..at + SUPERBLOCK_LEN]);
-        ext(crate::disk::fs::read(
-            &mut reader(image),
-            extent(83968, 40960),
-        ))
+        ext(edited_ext4_volume(|v| {
+            edit(&mut v[SUPERBLOCK_OFFSET..SUPERBLOCK_OFFSET + SUPERBLOCK_LEN]);
+        }))
         .1
+    }
+
+    fn put_u16(s: &mut [u8], at: usize, value: u16) {
+        s[at..at + 2].copy_from_slice(&value.to_le_bytes());
+    }
+
+    fn put_u32(s: &mut [u8], at: usize, value: u32) {
+        s[at..at + 4].copy_from_slice(&value.to_le_bytes());
+    }
+
+    /// Turns on the 64bit feature, which makes the high halves count.
+    fn set_64bit(s: &mut [u8]) {
+        let incompat = le_u32(s, sb::FEATURE_INCOMPAT) | INCOMPAT_64BIT;
+        put_u32(s, sb::FEATURE_INCOMPAT, incompat);
+    }
+
+    #[test]
+    fn size_beyond_u64_bytes_is_not_ext() {
+        // 2^64 - 1 blocks of 4 KiB: no byte count holds that.
+        let total = edited_ext4_volume(|v| {
+            let s = &mut v[SUPERBLOCK_OFFSET..];
+            set_64bit(s);
+            put_u32(s, sb::LOG_BLOCK_SIZE, 2);
+            put_u32(s, sb::BLOCKS_COUNT_HI, u32::MAX);
+        });
+        assert!(matches!(
+            total,
+            Field::Known {
+                value: Filesystem::Unrecognized,
+                ..
+            }
+        ));
+        // More reserved blocks than blocks, enough to overflow as bytes.
+        let reserved = edited_ext4_volume(|v| {
+            let s = &mut v[SUPERBLOCK_OFFSET..];
+            set_64bit(s);
+            put_u32(s, sb::R_BLOCKS_COUNT_HI, u32::MAX);
+        });
+        assert!(matches!(
+            reserved,
+            Field::Known {
+                value: Filesystem::Unrecognized,
+                ..
+            }
+        ));
+    }
+
+    #[test]
+    fn descriptor_table_size_overflow_is_unavailable() {
+        // 2^50 one-block groups of 32 KiB descriptors: the table size
+        // overflows u64.
+        let e = edited_ext4(|s| {
+            set_64bit(s);
+            put_u32(s, sb::BLOCKS_COUNT_HI, 1 << 18);
+            put_u32(s, sb::BLOCKS_PER_GROUP, 1);
+            put_u16(s, sb::DESC_SIZE, 0x8000);
+        });
+        assert!(
+            matches!(e.free_bytes, Field::Unavailable(Unavailable::ReadFailed(_))),
+            "{:?}",
+            e.free_bytes
+        );
+    }
+
+    #[test]
+    fn free_block_sum_overflow_is_unavailable() {
+        // 70001 one-block groups of 64 KiB blocks, each descriptor claiming
+        // 2^32 - 1 free blocks: the sum fits u64, its byte count doesn't.
+        let groups: u32 = 70_001;
+        let (_, e) = ext(edited_ext4_volume(|v| {
+            let s = &mut v[SUPERBLOCK_OFFSET..SUPERBLOCK_OFFSET + SUPERBLOCK_LEN];
+            set_64bit(s);
+            put_u32(s, sb::LOG_BLOCK_SIZE, 6);
+            put_u32(s, sb::FIRST_DATA_BLOCK, 0);
+            put_u32(s, sb::BLOCKS_COUNT_LO, groups);
+            put_u32(s, sb::BLOCKS_PER_GROUP, 1);
+            put_u16(s, sb::DESC_SIZE, 64);
+            let table = &mut v[1 << 16..][..64 * groups as usize];
+            for d in table.as_chunks_mut::<64>().0 {
+                put_u16(d, gd::FREE_BLOCKS_COUNT_LO, u16::MAX);
+                put_u16(d, gd::FREE_BLOCKS_COUNT_HI, u16::MAX);
+            }
+        }));
+        assert!(
+            matches!(e.free_bytes, Field::Unavailable(Unavailable::ReadFailed(_))),
+            "{:?}",
+            e.free_bytes
+        );
+    }
+
+    #[test]
+    fn meta_bg_free_count_overflow_is_unavailable() {
+        let e = edited_ext4(|s| {
+            set_64bit(s);
+            let incompat = le_u32(s, sb::FEATURE_INCOMPAT) | INCOMPAT_META_BG;
+            put_u32(s, sb::FEATURE_INCOMPAT, incompat);
+            put_u32(s, sb::FREE_BLOCKS_COUNT_HI, u32::MAX);
+        });
+        assert!(
+            matches!(e.free_bytes, Field::Unavailable(Unavailable::ReadFailed(_))),
+            "{:?}",
+            e.free_bytes
+        );
     }
 
     #[test]

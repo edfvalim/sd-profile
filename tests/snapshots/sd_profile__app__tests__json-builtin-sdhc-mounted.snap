@@ -124,6 +124,7 @@ expression: json(&profile)
     "value": [
       {
         "device": "disk6s1",
+        "partition": 1,
         "mount_point": "/Volumes/BOOTFS",
         "os_fs_type": "msdos",
         "options": [

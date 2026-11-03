@@ -7,6 +7,8 @@ use std::path::PathBuf;
 use serde::Serialize;
 use serde::ser::{SerializeMap, Serializer};
 
+use super::layout::PartitionNumber;
+
 /// The OS's name for a disk or a partition on it: `disk6` and `disk6s1` on
 /// macOS, `mmcblk0` and `mmcblk0p1` or `sdb` and `sdb1` on Linux. The device
 /// nodes are under `/dev`.
@@ -72,12 +74,23 @@ impl Serialize for DeviceDisk {
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Mount {
     pub device: DeviceName,
+    /// The partition the filesystem is on, numbered as in the partition
+    /// table; `null` for a filesystem on the whole disk.
+    pub partition: Option<PartitionNumber>,
     #[serde(serialize_with = "super::serialize_path")]
     pub mount_point: PathBuf,
     /// The filesystem type as the OS names it (`msdos`, `exfat`, `vfat`).
     /// The type read from the disk is in the layout.
     pub os_fs_type: String,
     pub options: Vec<MountOption>,
+}
+
+impl Mount {
+    /// Mounted read-only, so the OS doesn't write to the filesystem.
+    #[must_use]
+    pub fn is_read_only(&self) -> bool {
+        self.options.contains(&MountOption::ReadOnly)
+    }
 }
 
 /// Mount options that change how the card can be used. Each OS has more;

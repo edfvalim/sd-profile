@@ -337,7 +337,8 @@ fn decode_label(e: &[u8]) -> Option<String> {
 }
 
 /// Counts the clusters the bitmap marks in use. Bit `n` stands for cluster
-/// `n + 2`; bits past the cluster count are ignored.
+/// `n + 2`; bits past the cluster count are ignored. A cluster chain that
+/// ends before it covers every cluster is an error, not a partial count.
 fn count_used<R: BlockReader>(
     volume: &mut Volume<'_, R>,
     boot: &BootSector,
@@ -354,7 +355,9 @@ fn count_used<R: BlockReader>(
     let mut chain = Chain::new(bitmap.first_cluster);
     while remaining_bits > 0 {
         let Some(cluster) = chain.advance(volume, boot)? else {
-            break;
+            return Err(MetadataError::Inconsistent(
+                "the allocation bitmap's cluster chain ends before it covers every cluster",
+            ));
         };
         let bytes = volume.read(boot.cluster_offset(cluster), cluster_len)?;
         for &byte in &bytes {
@@ -463,6 +466,32 @@ mod tests {
         ));
         assert_eq!(e.percent_in_use, Some(42));
         assert!(e.issues.is_empty(), "{:?}", e.issues);
+    }
+
+    #[test]
+    fn bitmap_chain_ending_early_is_unavailable() {
+        let mut image = fixture_image("gpt-exfat");
+        let base = sector_of(2048);
+        let boot = BootSector::parse(&image[base..base + 512]).unwrap();
+        // Point the allocation bitmap entry at cluster 1, outside the heap:
+        // its chain ends before it covers a single cluster.
+        let root = base + usize::try_from(boot.cluster_offset(boot.root_cluster)).unwrap();
+        let at = (root..)
+            .step_by(entry::LEN)
+            .take(MAX_ROOT_ENTRIES_SCANNED)
+            .find(|&at| image[at] == entry::ALLOCATION_BITMAP)
+            .unwrap();
+        let first = at + entry::FIRST_CLUSTER;
+        image[first..first + 4].copy_from_slice(&1u32.to_le_bytes());
+        let e = exfat_of(crate::disk::fs::read(
+            &mut reader(image),
+            extent(2048, 126_976),
+        ));
+        assert!(
+            matches!(e.free_bytes, Field::Unavailable(Unavailable::ReadFailed(_))),
+            "{:?}",
+            e.free_bytes
+        );
     }
 
     #[test]

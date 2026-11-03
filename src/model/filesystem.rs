@@ -61,6 +61,18 @@ impl Filesystem {
         }
     }
 
+    /// Drops [`FsIssue::NotCleanlyUnmounted`], for a filesystem that is
+    /// mounted read-write: it keeps the flag set while mounted.
+    pub fn forget_mounted_dirty_flag(&mut self) {
+        let issues = match self {
+            Self::Fat12(fat) | Self::Fat16(fat) | Self::Fat32(fat) => &mut fat.issues,
+            Self::Exfat(exfat) => &mut exfat.issues,
+            Self::Ext2(ext) | Self::Ext3(ext) | Self::Ext4(ext) => &mut ext.issues,
+            Self::Ntfs | Self::Blank | Self::Unrecognized => return,
+        };
+        issues.retain(|issue| *issue != FsIssue::NotCleanlyUnmounted);
+    }
+
     /// Offset of the data area from the volume start: the first cluster on
     /// FAT and exFAT. ext block groups, and anything not profiled, start
     /// with the volume.

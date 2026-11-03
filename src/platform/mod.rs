@@ -14,7 +14,7 @@ mod unix;
 
 use std::path::PathBuf;
 
-use crate::model::{BlockSize, Card, DeviceName, Field, Mount, Reader, Source};
+use crate::model::{BlockSize, Card, DeviceName, Field, Mount, PartitionNumber, Reader, Source};
 
 pub use unix::{OpenError, TargetKind, is_root, open_read_only, target_kind};
 
@@ -69,6 +69,16 @@ pub enum Named {
     },
     /// Not a disk device at all, like `/dev/null`.
     Other,
+}
+
+/// Which part of a disk a device is.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum DiskPart {
+    /// The whole disk, as when a filesystem spans it without a partition
+    /// table.
+    WholeDisk,
+    /// One partition, numbered as in the partition table.
+    Partition(PartitionNumber),
 }
 
 /// Which USB storage devices count as card readers.

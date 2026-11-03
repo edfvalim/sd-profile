@@ -1,0 +1,306 @@
+---
+source: src/app.rs
+expression: json(&profile)
+---
+{
+  "schema_version": 1,
+  "target": {
+    "kind": "device",
+    "disk": {
+      "name": "disk6",
+      "path": "/dev/disk6",
+      "raw_path": "/dev/rdisk6"
+    }
+  },
+  "card": {
+    "value": {
+      "type": {
+        "value": "sdhc",
+        "source": "io_registry"
+      },
+      "capacity_bytes": {
+        "value": 15938355200,
+        "source": "io_registry"
+      },
+      "manufacturer": {
+        "value": {
+          "id": "0xdf",
+          "name": null
+        },
+        "source": "io_registry"
+      },
+      "oem_id": {
+        "value": {
+          "id": "0x3428",
+          "text": "4("
+        },
+        "source": "io_registry"
+      },
+      "product_name": {
+        "value": "SD",
+        "source": "io_registry"
+      },
+      "product_revision": {
+        "value": "2.0",
+        "source": "io_registry"
+      },
+      "serial_number": {
+        "value": "0x0000039e",
+        "source": "io_registry"
+      },
+      "manufacturing_date": {
+        "value": "2020-10",
+        "source": "io_registry"
+      },
+      "spec_version": {
+        "value": "3.0+",
+        "source": "io_registry"
+      },
+      "speed_class": {
+        "value": 10,
+        "source": "io_registry"
+      },
+      "uhs_ii_supported": {
+        "value": false,
+        "source": "io_registry"
+      },
+      "write_protect": {
+        "switch": {
+          "value": false,
+          "source": "io_registry"
+        },
+        "register": {
+          "value": false,
+          "source": "io_registry"
+        }
+      }
+    },
+    "source": "io_registry"
+  },
+  "reader": {
+    "value": {
+      "connection": {
+        "kind": "built_in",
+        "pci": {
+          "vendor_id": "0x17a0",
+          "device_id": "0x9755",
+          "subsystem_vendor_id": "0x17a0",
+          "subsystem_id": "0x9755",
+          "revision_id": "0x01",
+          "link": {
+            "value": {
+              "generation": 2,
+              "transfer_rate": "5.0 GT/s",
+              "width": 1
+            },
+            "source": "io_registry"
+          }
+        }
+      },
+      "vendor_name": {
+        "value": "Apple",
+        "source": "io_registry"
+      },
+      "product_name": {
+        "value": "Built In SDXC Reader",
+        "source": "io_registry"
+      },
+      "uhs_ii_supported": {
+        "value": true,
+        "source": "io_registry"
+      },
+      "card_link": {
+        "value": {
+          "speed_mode": "sdr104",
+          "bus_width": 4,
+          "clock_khz": 200000
+        },
+        "source": "io_registry"
+      }
+    },
+    "source": "io_registry"
+  },
+  "mounts": {
+    "value": [
+      {
+        "device": "disk6s1",
+        "partition": 1,
+        "mount_point": "/Volumes/BOOTFS",
+        "os_fs_type": "msdos",
+        "options": [
+          "nosuid",
+          "nodev",
+          "noatime"
+        ]
+      }
+    ],
+    "source": "mount_table"
+  },
+  "layout": {
+    "size_bytes": {
+      "value": 15938355200,
+      "source": "io_registry"
+    },
+    "block_size": {
+      "value": 512,
+      "source": "io_registry"
+    },
+    "partition_table": {
+      "value": {
+        "scheme": "mbr",
+        "disk_signature": "0x00000000",
+        "partitions": [
+          {
+            "number": 1,
+            "role": "primary",
+            "bootable": true,
+            "type": {
+              "id": "0x0c",
+              "name": "FAT32 (LBA)"
+            },
+            "start_lba": 8192,
+            "sectors": 131072,
+            "offset_bytes": 4194304,
+            "size_bytes": 67108864
+          },
+          {
+            "number": 2,
+            "role": "primary",
+            "bootable": false,
+            "type": {
+              "id": "0x83",
+              "name": "Linux"
+            },
+            "start_lba": 139264,
+            "sectors": 122880,
+            "offset_bytes": 71303168,
+            "size_bytes": 62914560
+          }
+        ],
+        "issues": []
+      },
+      "source": "partition_table"
+    },
+    "volumes": [
+      {
+        "partition": 1,
+        "start_lba": 8192,
+        "sectors": 131072,
+        "offset_bytes": 4194304,
+        "size_bytes": 67108864,
+        "filesystem": {
+          "value": {
+            "type": "fat32",
+            "label": {
+              "value": "BOOT",
+              "source": "root_directory"
+            },
+            "volume_id": "8093-19ED",
+            "oem_name": "BSD  4.4",
+            "sector_size_bytes": 512,
+            "cluster_size_bytes": 512,
+            "cluster_count": 129022,
+            "size_bytes": 66059264,
+            "free_bytes": {
+              "value": 66058752,
+              "source": "allocation_table"
+            },
+            "data_offset_bytes": 1048576,
+            "reserved_sectors": 32,
+            "fat_count": 2,
+            "fat32": {
+              "fsinfo_sector": 1,
+              "backup_boot_sector": 6
+            },
+            "issues": []
+          },
+          "source": "boot_sector"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 4194304,
+            "aligned_to_bytes": 4194304
+          },
+          "data": {
+            "disk_offset_bytes": 5242880,
+            "aligned_to_bytes": 1048576
+          },
+          "dos_cylinder_start": false,
+          "status": "misaligned",
+          "boundary": {
+            "bytes": 4194304,
+            "capacity_class": "sdhc",
+            "capacity_bytes": 15938355200
+          },
+          "misaligned": "data"
+        }
+      },
+      {
+        "partition": 2,
+        "start_lba": 139264,
+        "sectors": 122880,
+        "offset_bytes": 71303168,
+        "size_bytes": 62914560,
+        "filesystem": {
+          "value": {
+            "type": "ext4",
+            "label": {
+              "value": "rootfs",
+              "source": "superblock"
+            },
+            "uuid": "d97db754-2e18-42d0-95c1-c9dd9ae14f64",
+            "block_size_bytes": 4096,
+            "block_count": 15360,
+            "size_bytes": 62914560,
+            "free_bytes": {
+              "value": 51425280,
+              "source": "group_descriptors"
+            },
+            "reserved_bytes": 3145728,
+            "inode_count": 15360,
+            "free_inodes": 15343,
+            "last_mounted": null,
+            "revision": 1,
+            "features": [
+              "has_journal",
+              "ext_attr",
+              "resize_inode",
+              "dir_index",
+              "orphan_file",
+              "filetype",
+              "extent",
+              "64bit",
+              "flex_bg",
+              "metadata_csum_seed",
+              "sparse_super",
+              "large_file",
+              "huge_file",
+              "dir_nlink",
+              "extra_isize",
+              "metadata_csum"
+            ],
+            "issues": []
+          },
+          "source": "superblock"
+        },
+        "alignment": {
+          "start": {
+            "disk_offset_bytes": 71303168,
+            "aligned_to_bytes": 4194304
+          },
+          "data": {
+            "disk_offset_bytes": 71303168,
+            "aligned_to_bytes": 4194304
+          },
+          "dos_cylinder_start": false,
+          "status": "aligned",
+          "boundary": {
+            "bytes": 4194304,
+            "capacity_class": "sdhc",
+            "capacity_bytes": 15938355200
+          }
+        }
+      }
+    ]
+  }
+}

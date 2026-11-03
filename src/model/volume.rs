@@ -79,8 +79,8 @@ pub enum Misaligned {
 pub struct Boundary {
     pub bytes: u64,
     pub capacity_class: CapacityClass,
-    /// The capacity the boundary was chosen for. For a disk image this is
-    /// the image's size.
+    /// The capacity the boundary was chosen for: the card's, or the disk's
+    /// when the card's isn't known. For a disk image, the image's size.
     pub capacity_bytes: u64,
 }
 

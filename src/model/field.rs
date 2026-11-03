@@ -60,8 +60,6 @@ pub enum Unavailable {
     RequiresRoot,
     /// The reader is powered down, as it is while no card is in use.
     PoweredDown,
-    /// This version doesn't read the value yet.
-    NotImplemented,
     /// Reading the value failed; the text says how.
     ReadFailed(String),
 }
@@ -79,7 +77,6 @@ impl Unavailable {
             Self::CardInactive => "card_inactive",
             Self::RequiresRoot => "requires_root",
             Self::PoweredDown => "powered_down",
-            Self::NotImplemented => "not_implemented",
             Self::ReadFailed(_) => "read_failed",
         }
     }
@@ -96,7 +93,6 @@ impl fmt::Display for Unavailable {
             Self::CardInactive => f.write_str("the card is ejected or not set up yet"),
             Self::RequiresRoot => f.write_str("needs root, run with sudo"),
             Self::PoweredDown => f.write_str("the reader is powered down"),
-            Self::NotImplemented => f.write_str("this version doesn't read it yet"),
             Self::ReadFailed(detail) => write!(f, "read failed: {detail}"),
         }
     }

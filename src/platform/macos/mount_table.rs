@@ -2,7 +2,9 @@
 
 use std::path::PathBuf;
 
+use super::names;
 use crate::model::{DeviceName, Mount, MountOption};
+use crate::platform::DiskPart;
 
 /// One `statfs` record from `getfsstat`, copied out of the C struct.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -35,8 +37,13 @@ pub fn mounts_of(disk: &DeviceName, table: &[RawMount]) -> Vec<Mount> {
         .iter()
         .filter_map(|raw| {
             let name = DeviceName::new(raw.from.strip_prefix("/dev/")?)?;
-            is_on_disk(&name, disk).then(|| Mount {
+            let partition = match names::part_of(disk, &name)? {
+                DiskPart::WholeDisk => None,
+                DiskPart::Partition(number) => Some(number),
+            };
+            Some(Mount {
                 device: name,
+                partition,
                 mount_point: raw.on.clone(),
                 os_fs_type: raw.fs_type.clone(),
                 options: OPTION_BITS
@@ -47,18 +54,6 @@ pub fn mounts_of(disk: &DeviceName, table: &[RawMount]) -> Vec<Mount> {
             })
         })
         .collect()
-}
-
-/// `name` is `disk` itself or one of its partitions, `<disk>s<n>`. A
-/// partition's own slices (`disk6s1s2`, APFS snapshots) count too.
-fn is_on_disk(name: &DeviceName, disk: &DeviceName) -> bool {
-    match name.as_str().strip_prefix(disk.as_str()) {
-        Some("") => true,
-        Some(rest) => rest
-            .strip_prefix('s')
-            .is_some_and(|n| n.starts_with(|c: char| c.is_ascii_digit())),
-        None => false,
-    }
 }
 
 #[cfg(test)]
@@ -87,6 +82,9 @@ mod tests {
         let mounts = mounts_of(&disk, &table);
         let devices: Vec<&str> = mounts.iter().map(|m| m.device.as_str()).collect();
         assert_eq!(devices, ["disk6s1", "disk6"]);
+        let partitions: Vec<Option<u32>> =
+            mounts.iter().map(|m| m.partition.map(|p| p.0)).collect();
+        assert_eq!(partitions, [Some(1), None]);
         assert_eq!(
             mounts[0].options,
             [

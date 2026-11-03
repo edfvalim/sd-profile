@@ -357,6 +357,12 @@ pub enum Issue {
     EmptyOrReversed { partition: PartitionNumber },
     /// A GPT partition lies outside the header's usable LBA range.
     OutsideUsableRange { partition: PartitionNumber },
+    /// A logical partition extends outside the extended partition that
+    /// holds its chain.
+    OutsideExtended {
+        partition: PartitionNumber,
+        extended: PartitionNumber,
+    },
     /// One GPT header copy could not be used.
     GptHeader {
         copy: HeaderCopy,

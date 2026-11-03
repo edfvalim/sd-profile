@@ -1,0 +1,60 @@
+---
+source: src/app.rs
+expression: human(&profile)
+---
+Target           /dev/disk6 (card in the built-in reader)
+
+Card             SDHC, 14.8 GiB (15938355200 bytes)
+  Manufacturer   0xdf (not a known manufacturer ID)
+  OEM ID         0x3428 ("4(")
+  Product        "SD"
+  Revision       2.0
+  Serial number  0x0000039e
+  Manufactured   2020-10
+  SD spec        3.0+ (the OS reports no version above this one)
+  Speed class    Class 10
+  UHS-II         not supported
+  Write protect  off
+
+Reader           Apple Built In SDXC Reader
+  Connection     built-in, PCI 17a0:9755 (subsystem 17a0:9755, revision 0x01)
+  PCIe link      5.0 GT/s x1 (PCIe gen 2)
+  UHS-II         supported
+  Card bus       UHS-I SDR104, 4 data lines, 200 MHz
+
+Mounts
+  disk6s1        /Volumes/BOOTFS (msdos, nosuid, nodev, noatime)
+
+Size             14.8 GiB (15938355200 bytes)
+Sector size      512 bytes (31129600 sectors)
+
+Partition table  MBR, disk signature 0x00000000
+
+  #  Role     Boot  Start LBA  End LBA  Sectors      Size  Type
+  1  primary  *          8192   139263   131072  64.0 MiB  0x0c FAT32 (LBA)
+  2  primary           139264   262143   122880  60.0 MiB  0x83 Linux
+
+Partition 1      FAT32
+  Label          BOOT
+  Volume ID      8093-19ED
+  Size           63.0 MiB in 129022 clusters of 512 B
+  Free           63.0 MiB (100.0%)
+  Formatter      BSD  4.4
+  Mounted        /Volumes/BOOTFS (read-write)
+  Start          LBA 8192, a multiple of 4 MiB
+  Alignment      off, the data area is not on the 4 MiB boundary for 14.8 GiB SDHC; data area at 5 MiB, a multiple of 1 MiB
+
+WARN: partition 1: its clusters straddle the 4 MiB boundaries the SD specification recommends for this capacity, which slows writes and wears the card
+
+Partition 2      ext4
+  Label          rootfs
+  UUID           d97db754-2e18-42d0-95c1-c9dd9ae14f64
+  Size           60.0 MiB in 15360 blocks of 4.0 KiB
+  Free           49.0 MiB (81.7%), 3.0 MiB of it reserved for root
+  Inodes         15343 of 15360 free
+  Features       has_journal ext_attr resize_inode dir_index orphan_file
+                 filetype extent 64bit flex_bg metadata_csum_seed sparse_super
+                 large_file huge_file dir_nlink extra_isize metadata_csum
+  Mounted        no
+  Start          LBA 139264, a multiple of 4 MiB
+  Alignment      ok, data area at 68 MiB, on the 4 MiB boundary for 14.8 GiB SDHC
