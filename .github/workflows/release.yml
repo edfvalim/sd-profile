@@ -52,11 +52,17 @@ jobs:
           merge-multiple: true
       - name: release notes from CHANGELOG.md
         run: |
-          # The section cog wrote for this tag, up to the next separator.
-          awk -v tag="## ${GITHUB_REF_NAME} " '
-            index($0, tag) == 1 { found = 1; next }
-            found && /^- - -/ { exit }
-            found { print }
+          # The section cog wrote for this tag. A final release's section
+          # only covers the changes since its last release candidate, so
+          # the candidates' sections follow, back to the previous final
+          # release.
+          awk -v tag="${GITHUB_REF_NAME}" '
+            /^## v/ {
+              if ($2 == tag) { on = 1; final = (tag !~ /-/); print; next }
+              if (on && (!final || $2 !~ /-/)) exit
+            }
+            on && /^- - -/ { print ""; next }
+            on { print }
           ' CHANGELOG.md > notes.md
           test -s notes.md || echo "See CHANGELOG.md." > notes.md
       - name: create release
