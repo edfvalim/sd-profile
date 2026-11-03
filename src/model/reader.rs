@@ -228,6 +228,9 @@ pub enum SpeedMode {
     Ddr50,
     /// UHS-II, the second row of pins: serial lanes at 156 or 312 MB/s.
     UhsII,
+    /// An MMC on its own bus timing, which the driver doesn't
+    /// break down further.
+    Mmc,
 }
 
 impl fmt::Display for SpeedMode {
@@ -241,6 +244,7 @@ impl fmt::Display for SpeedMode {
             Self::Sdr104 => "UHS-I SDR104",
             Self::Ddr50 => "UHS-I DDR50",
             Self::UhsII => "UHS-II",
+            Self::Mmc => "MMC",
         })
     }
 }

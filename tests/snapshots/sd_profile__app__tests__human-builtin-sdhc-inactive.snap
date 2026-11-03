@@ -2,7 +2,7 @@
 source: src/app.rs
 expression: human(&profile)
 ---
-Target           card in the built-in reader, no disk
+Target           card in the built-in reader, no disk (ejected or not set up yet)
 
 Card             SDHC, 14.8 GiB (15938355200 bytes)
   Manufacturer   0xdf (not a known manufacturer ID)

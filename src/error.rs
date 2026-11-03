@@ -33,6 +33,16 @@ pub enum Error {
     NotACard { path: PathBuf },
     #[error("{} changed while it was being opened", path.display())]
     Changed { path: PathBuf },
+    #[error(
+        "the card in {} was removed while it was being read; put it back and run again",
+        disk.display()
+    )]
+    CardRemoved { disk: PathBuf },
+    #[error(
+        "the card in {} changed while it was being read; run again",
+        disk.display()
+    )]
+    CardChanged { disk: PathBuf },
     #[error("cannot write the output: {0}")]
     Output(#[source] io::Error),
 }

@@ -61,16 +61,23 @@ impl Filesystem {
         }
     }
 
-    /// Drops [`FsIssue::NotCleanlyUnmounted`], for a filesystem that is
-    /// mounted read-write: it keeps the flag set while mounted.
-    pub fn forget_mounted_dirty_flag(&mut self) {
+    /// Drops [`FsIssue::NotCleanlyUnmounted`] and
+    /// [`FsIssue::FreeCountStale`], for a filesystem that is mounted
+    /// read-write: the OS keeps the dirty flag set while mounted and brings
+    /// the free count hint up to date only at unmount.
+    pub fn forget_mounted_state(&mut self) {
         let issues = match self {
             Self::Fat12(fat) | Self::Fat16(fat) | Self::Fat32(fat) => &mut fat.issues,
             Self::Exfat(exfat) => &mut exfat.issues,
             Self::Ext2(ext) | Self::Ext3(ext) | Self::Ext4(ext) => &mut ext.issues,
             Self::Ntfs | Self::Blank | Self::Unrecognized => return,
         };
-        issues.retain(|issue| *issue != FsIssue::NotCleanlyUnmounted);
+        issues.retain(|issue| {
+            !matches!(
+                issue,
+                FsIssue::NotCleanlyUnmounted | FsIssue::FreeCountStale { .. }
+            )
+        });
     }
 
     /// Offset of the data area from the volume start: the first cluster on
@@ -157,6 +164,9 @@ pub struct Ext {
     /// `null` on revision 0 volumes, which predate UUIDs.
     pub uuid: Option<Uuid>,
     pub block_size_bytes: u32,
+    /// The allocation unit: the block size, or a multiple of it on a
+    /// bigalloc volume.
+    pub cluster_size_bytes: u32,
     pub block_count: u64,
     /// Blocks times block size.
     pub size_bytes: u64,

@@ -4,8 +4,8 @@ use std::io::{self, Write};
 
 use super::{line, shown, size, sub_line};
 use crate::model::{
-    Card, CardLink, Connection, Field, Mount, PciDevice, PcieLink, Profile, Reader, Target,
-    UsbSpeed, WriteProtect,
+    Card, CardLink, Connection, DeviceDisk, Field, Mount, PciDevice, PcieLink, Profile, Reader,
+    Target, Unavailable, UsbSpeed, WriteProtect,
 };
 
 /// Writes the target line and the card, reader and mounts sections, each
@@ -14,15 +14,8 @@ pub(super) fn write(profile: &Profile, out: &mut impl Write) -> io::Result<()> {
     let Target::Device { disk } = &profile.target else {
         return Ok(());
     };
-    let reader_kind = match profile.reader.value().map(|r| &r.connection) {
-        Some(Connection::BuiltIn { .. }) => "built-in reader",
-        Some(Connection::Usb(_)) => "USB reader",
-        None => "reader",
-    };
-    let target = match disk {
-        Some(disk) => format!("{} (card in the {reader_kind})", disk.name.path().display()),
-        None => format!("card in the {reader_kind}, no disk"),
-    };
+    let connection = profile.reader.value().map(|r| &r.connection);
+    let target = target_text(disk.as_ref(), &profile.card, connection);
     line(out, "Target", &target)?;
     writeln!(out)?;
     section(out, "Card", &profile.card, write_card)?;
@@ -30,6 +23,29 @@ pub(super) fn write(profile: &Profile, out: &mut impl Write) -> io::Result<()> {
     section(out, "Mounts", &profile.mounts, |mounts, out| {
         write_mounts(mounts, out)
     })
+}
+
+/// The target line: the card's disk and the reader it is in, or why there
+/// is no disk.
+fn target_text(
+    disk: Option<&DeviceDisk>,
+    card: &Field<Card>,
+    connection: Option<&Connection>,
+) -> String {
+    let reader_kind = match connection {
+        Some(Connection::BuiltIn { .. }) => "built-in reader",
+        Some(Connection::Usb(_)) => "USB reader",
+        None => "reader",
+    };
+    match (disk, card) {
+        (Some(disk), _) => format!("{} (card in the {reader_kind})", disk.name.path().display()),
+        (None, Field::Unavailable(Unavailable::NoCard)) => {
+            format!("the {reader_kind}, no card in it")
+        }
+        (None, _) => {
+            format!("card in the {reader_kind}, no disk (ejected or not set up yet)")
+        }
+    }
 }
 
 /// A section written by `write` when its field is known, or one line saying
@@ -265,6 +281,17 @@ fn write_mounts(mounts: &[Mount], out: &mut impl Write) -> io::Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn target_says_why_there_is_no_disk() {
+        let empty = Field::Unavailable(Unavailable::NoCard);
+        assert_eq!(target_text(None, &empty, None), "the reader, no card in it");
+        let ejected = Field::Unavailable(Unavailable::CardInactive);
+        assert_eq!(
+            target_text(None, &ejected, None),
+            "card in the reader, no disk (ejected or not set up yet)"
+        );
+    }
 
     #[test]
     fn clocks() {

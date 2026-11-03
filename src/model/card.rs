@@ -43,6 +43,9 @@ pub enum CardType {
     Sdxc,
     /// Ultra capacity, over 2 TB up to 128 TB.
     Sduc,
+    /// An MMC (`MultiMediaCard`), the older card SD grew out of, which fits SD
+    /// slots and speaks a related protocol.
+    Mmc,
 }
 
 impl fmt::Display for CardType {
@@ -52,6 +55,7 @@ impl fmt::Display for CardType {
             Self::Sdhc => "SDHC",
             Self::Sdxc => "SDXC",
             Self::Sduc => "SDUC",
+            Self::Mmc => "MMC",
         })
     }
 }

@@ -94,6 +94,7 @@ expression: out
             },
             "uuid": "7a8913ea-ff85-4a3f-83be-f57eb5e34921",
             "block_size_bytes": 1024,
+            "cluster_size_bytes": 1024,
             "block_count": 20480,
             "size_bytes": 20971520,
             "free_bytes": {
@@ -150,6 +151,7 @@ expression: out
             },
             "uuid": "08e5bf8a-2c67-4860-891d-9c595e9bca0d",
             "block_size_bytes": 1024,
+            "cluster_size_bytes": 1024,
             "block_count": 20480,
             "size_bytes": 20971520,
             "free_bytes": {
@@ -207,6 +209,7 @@ expression: out
             },
             "uuid": "9def6b63-9922-4532-900b-a030b8bcc495",
             "block_size_bytes": 1024,
+            "cluster_size_bytes": 1024,
             "block_count": 20480,
             "size_bytes": 20971520,
             "free_bytes": {

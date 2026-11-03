@@ -27,7 +27,8 @@ attached=""
 
 cleanup() {
   if [[ -n "$attached" ]]; then
-    hdiutil detach -force "$attached" >/dev/null 2>&1 || true
+    diskutil unmountDisk force "$attached" >/dev/null 2>&1 || true
+    diskutil eject "$attached" >/dev/null 2>&1 || true
   fi
   rm -rf "$work_dir"
 }

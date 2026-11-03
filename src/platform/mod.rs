@@ -16,7 +16,10 @@ use std::path::PathBuf;
 
 use crate::model::{BlockSize, Card, DeviceName, Field, Mount, PartitionNumber, Reader, Source};
 
-pub use unix::{OpenError, TargetKind, is_root, open_read_only, target_kind};
+pub use unix::{
+    OpenError, TargetKind, is_device_io_error, is_permission_bits_refusal, is_root, open_read_only,
+    target_kind,
+};
 
 /// A card reader the OS knows about, and what it says about the card in it.
 #[derive(Debug, Clone, PartialEq, Eq)]

@@ -46,10 +46,12 @@ pub fn sd_devices(usb: UsbScope) -> Result<Vec<SdDevice>, PlatformError> {
         .filter_map(Object::parent)
         .map(|pci| subtree(&pci))
         .collect::<Result<_, _>>()?;
+    // A USB device unplugged during the walk is left out rather than failing
+    // the run; it holds no card anymore.
     let usb_devices: Vec<Entry> = services(c"IOUSBHostDevice")?
         .iter()
-        .map(subtree)
-        .collect::<Result<_, _>>()?;
+        .filter_map(|device| subtree(device).ok())
+        .collect();
     let mut devices = map::built_in_readers(&pci_devices);
     devices.extend(map::usb_readers(&usb_devices, usb));
     Ok(devices)
@@ -160,8 +162,11 @@ fn drain(iterator: &Object) -> Vec<Object> {
     .collect()
 }
 
-/// The entry with its properties and everything below it. An entry that
-/// goes away during the walk (a card pulled out) fails the whole walk.
+/// The entry with its properties and everything below it. A child whose
+/// walk fails is left out: the status codes don't tell an entry that went
+/// away during the walk (a card pulled out) from one that can't be read,
+/// and either way the entry reads as it is without it. Only a failure on
+/// `object` itself is an error.
 fn subtree(object: &Object) -> Result<Entry, PlatformError> {
     Ok(Entry {
         class: object.class()?,
@@ -169,8 +174,8 @@ fn subtree(object: &Object) -> Result<Entry, PlatformError> {
         children: object
             .children()?
             .iter()
-            .map(subtree)
-            .collect::<Result<_, _>>()?,
+            .filter_map(|child| subtree(child).ok())
+            .collect(),
     })
 }
 

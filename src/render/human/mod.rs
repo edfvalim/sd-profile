@@ -573,6 +573,13 @@ fn write_ext(ext: &Ext, out: &mut impl Write) -> io::Result<()> {
         ext.block_size_bytes,
         out,
     )?;
+    if ext.cluster_size_bytes != ext.block_size_bytes {
+        sub_line(
+            out,
+            "Clusters",
+            &format!("{} (bigalloc)", size(u64::from(ext.cluster_size_bytes))),
+        )?;
+    }
     write_free(
         &ext.free_bytes,
         ext.size_bytes,
@@ -684,8 +691,13 @@ fn fs_issue_text(issue: &FsIssue) -> String {
             recorded_bytes,
             counted_bytes,
         } => format!(
-            "the stored free space hint ({}) disagrees with the allocation count ({})",
-            size(*recorded_bytes),
+            "the stored free space hint is {} {} the allocation count ({} free)",
+            size(recorded_bytes.abs_diff(*counted_bytes)),
+            if recorded_bytes < counted_bytes {
+                "below"
+            } else {
+                "above"
+            },
             size(*counted_bytes)
         ),
         FsIssue::BootChecksumMismatch => "the boot region checksum does not match".to_owned(),
@@ -806,6 +818,26 @@ fn write_table(out: &mut impl Write, columns: &[Column], rows: &[Vec<String>]) -
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn stale_free_count_says_how_far_off_it_is() {
+        let issue = FsIssue::FreeCountStale {
+            recorded_bytes: 3_990_335_488,
+            counted_bytes: 3_990_339_584,
+        };
+        assert_eq!(
+            fs_issue_text(&issue),
+            "the stored free space hint is 4.0 KiB below the allocation count (3.7 GiB free)"
+        );
+        let issue = FsIssue::FreeCountStale {
+            recorded_bytes: 449_553_408,
+            counted_bytes: 449_357_824,
+        };
+        assert_eq!(
+            fs_issue_text(&issue),
+            "the stored free space hint is 191.0 KiB above the allocation count (428.5 MiB free)"
+        );
+    }
 
     #[test]
     fn card_text_cannot_drive_the_terminal() {

@@ -448,7 +448,7 @@ fn fsinfo_free<R: BlockReader>(
 }
 
 /// The clean-shutdown and hard-error bits FAT16 and FAT32 keep in entry 1
-/// of the table, which Windows maintains. A set bit means clean, or no
+/// of the table, which Windows and macOS maintain. A set bit means clean, or no
 /// error. FAT12 has neither.
 fn state_issues<R: BlockReader>(volume: &mut Volume<'_, R>, table: &Table) -> Vec<FsIssue> {
     let (clean, no_error) = match table.fat_type {
@@ -562,7 +562,15 @@ fn decode_name(name: &[u8; 11]) -> Option<String> {
         // 0x05 stands for a leading 0xE5, which would mean "deleted".
         bytes[0] = 0xE5;
     }
-    let text = decode_ascii(&bytes);
+    // macOS's newfs_msdos writes the label it is given as UTF-8. Bytes in
+    // an OEM code page are almost never valid UTF-8, so valid UTF-8 beyond
+    // ASCII is taken as such.
+    let text = match std::str::from_utf8(&bytes) {
+        Ok(text) if !text.is_ascii() && !text.chars().any(char::is_control) => {
+            text.trim_end_matches([' ', '\0']).to_owned()
+        }
+        _ => decode_ascii(&bytes),
+    };
     (!text.is_empty()).then_some(text)
 }
 
@@ -770,6 +778,20 @@ mod tests {
         assert_eq!(
             decode_name(b"\x05BC        ").as_deref(),
             Some("\u{FFFD}BC")
+        );
+    }
+
+    #[test]
+    fn utf8_labels_decode() {
+        // What `newfs_msdos -v CAFÉ` writes on macOS.
+        assert_eq!(
+            decode_name(b"CAF\xC3\x89      ").as_deref(),
+            Some("CAF\u{C9}")
+        );
+        // cp850 0x90 is É, but alone it isn't UTF-8.
+        assert_eq!(
+            decode_name(b"CAF\x90       ").as_deref(),
+            Some("CAF\u{FFFD}")
         );
     }
 

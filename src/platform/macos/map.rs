@@ -212,6 +212,7 @@ fn card_type(s: &str) -> Read<CardType> {
         "SDHC" => CardType::Sdhc,
         "SDXC" => CardType::Sdxc,
         "SDUC" => CardType::Sduc,
+        "MMC" => CardType::Mmc,
         _ => return Err(invalid!("unrecognized \"Card Type\" {s:?}")),
     })
 }
@@ -240,8 +241,8 @@ fn card_link(slot: &Entry) -> Read<CardLink> {
     })
 }
 
-/// Apple's `Speed Mode` strings. The driver also writes `UHS: NotSet`,
-/// `MMC` and `Unknown`, which name no mode.
+/// Apple's `Speed Mode` strings. The driver also writes `UHS: NotSet` and
+/// `Unknown`, which name no mode.
 fn speed_mode(s: &str) -> Read<SpeedMode> {
     Ok(match s {
         "NormalSpeed" => SpeedMode::DefaultSpeed,
@@ -252,6 +253,12 @@ fn speed_mode(s: &str) -> Read<SpeedMode> {
         "UHS: SDR104" => SpeedMode::Sdr104,
         "UHS: DDR50" => SpeedMode::Ddr50,
         "UHS-II" => SpeedMode::UhsII,
+        "MMC" => SpeedMode::Mmc,
+        "Unknown" | "UHS: NotSet" => {
+            return Err(invalid!(
+                "the driver names no speed mode (\"Speed Mode\" {s:?})"
+            ));
+        }
         _ => return Err(invalid!("unrecognized \"Speed Mode\" {s:?}")),
     })
 }
@@ -698,6 +705,53 @@ mod tests {
             ))
         );
         assert!(device.card.value().is_some());
+    }
+
+    /// The capture with its slot's `key` set to `value`.
+    fn with_slot_string(key: &str, value: &str) -> SdDevice {
+        let mut roots = ioreg::fixture("builtin-sdhc-mounted");
+        slot_mut(&mut roots[0])
+            .properties
+            .insert(key.into(), Value::String(value.into()));
+        built_in_readers(&roots).remove(0)
+    }
+
+    #[test]
+    fn mmc_speed_mode_is_a_mode() {
+        let device = with_slot_string("Speed Mode", "MMC");
+        assert_eq!(
+            device.reader.card_link.value().map(|link| link.speed_mode),
+            Some(SpeedMode::Mmc)
+        );
+    }
+
+    #[test]
+    fn speed_modes_that_name_no_mode_say_so() {
+        for raw in ["Unknown", "UHS: NotSet"] {
+            let device = with_slot_string("Speed Mode", raw);
+            assert_eq!(
+                device.reader.card_link,
+                Field::Unavailable(Unavailable::ReadFailed(format!(
+                    "the driver names no speed mode (\"Speed Mode\" {raw:?})"
+                )))
+            );
+        }
+    }
+
+    #[test]
+    fn mmc_card_type_is_a_type() {
+        let mut roots = ioreg::fixture("builtin-sdhc-mounted");
+        let slot = slot_mut(&mut roots[0]);
+        let Some(Value::Dictionary(chars)) = slot.properties.get_mut("Card Characteristics") else {
+            panic!("no Card Characteristics in the capture");
+        };
+        chars.insert("Card Type".into(), Value::String("MMC".into()));
+        let device = built_in_readers(&roots).remove(0);
+        let card = device.card.value().expect("the card is read");
+        assert_eq!(
+            card.card_type,
+            Field::known(CardType::Mmc, Source::IoRegistry)
+        );
     }
 
     fn slot_mut(entry: &mut Entry) -> &mut Entry {

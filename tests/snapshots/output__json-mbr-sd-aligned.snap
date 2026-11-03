@@ -133,6 +133,7 @@ expression: out
             },
             "uuid": "d97db754-2e18-42d0-95c1-c9dd9ae14f64",
             "block_size_bytes": 4096,
+            "cluster_size_bytes": 4096,
             "block_count": 15360,
             "size_bytes": 62914560,
             "free_bytes": {

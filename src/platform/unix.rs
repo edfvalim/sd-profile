@@ -42,6 +42,21 @@ pub fn is_root() -> bool {
     unsafe { libc::geteuid() == 0 }
 }
 
+/// The open was refused by the file's permissions (`EACCES`), as device
+/// nodes refuse anyone but root. `EPERM` is a different refusal, by a
+/// policy such as a macOS privacy setting, that root doesn't get past.
+#[must_use]
+pub fn is_permission_bits_refusal(err: &io::Error) -> bool {
+    err.raw_os_error() == Some(libc::EACCES)
+}
+
+/// The device failed the I/O itself (`EIO`), as a card pulled out mid-read
+/// or a failing card does.
+#[must_use]
+pub fn is_device_io_error(err: &io::Error) -> bool {
+    err.raw_os_error() == Some(libc::EIO)
+}
+
 /// Says what kind of target `path` names, without opening it. Device nodes
 /// can be looked at without root, but not opened.
 ///
@@ -96,6 +111,16 @@ pub fn open_read_only(path: &Path) -> Result<OpenedTarget, OpenError> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn only_eacces_is_a_permission_bits_refusal() {
+        assert!(is_permission_bits_refusal(&io::Error::from_raw_os_error(
+            libc::EACCES
+        )));
+        assert!(!is_permission_bits_refusal(&io::Error::from_raw_os_error(
+            libc::EPERM
+        )));
+    }
 
     #[test]
     fn regular_file_is_disk_image() {

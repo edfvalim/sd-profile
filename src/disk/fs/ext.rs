@@ -24,6 +24,7 @@ mod sb {
     pub const FREE_INODES_COUNT: usize = 0x10;
     pub const FIRST_DATA_BLOCK: usize = 0x14;
     pub const LOG_BLOCK_SIZE: usize = 0x18;
+    pub const LOG_CLUSTER_SIZE: usize = 0x1C;
     pub const BLOCKS_PER_GROUP: usize = 0x20;
     pub const INODES_PER_GROUP: usize = 0x28;
     pub const MAGIC: usize = 0x38;
@@ -62,6 +63,8 @@ const INCOMPAT_64BIT: u32 = 0x0080;
 const RO_COMPAT_SPARSE_SUPER: u32 = 0x0001;
 const RO_COMPAT_LARGE_FILE: u32 = 0x0002;
 const RO_COMPAT_BTREE_DIR: u32 = 0x0004;
+/// Space is allocated in clusters of several blocks.
+const RO_COMPAT_BIGALLOC: u32 = 0x0200;
 const RO_COMPAT_METADATA_CSUM: u32 = 0x0400;
 
 /// Features ext3 supports, as `blkid` defines them: a volume with any other
@@ -89,6 +92,11 @@ pub struct Superblock {
     block_count: u64,
     /// `block_count` blocks in bytes, which `parse` checks fits in a `u64`.
     size_bytes: u64,
+    /// The reserved blocks in bytes, at most `size_bytes`.
+    reserved_bytes: u64,
+    /// The allocation unit: a block, or with bigalloc a cluster of
+    /// `blocks_per_cluster` blocks.
+    blocks_per_cluster: u32,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -128,9 +136,22 @@ impl Superblock {
             return None;
         }
         let block_size: u32 = 1024 << log_block_size;
+        // With bigalloc the cluster is a power-of-two number of blocks, at
+        // most 2 GiB here so its byte size fits a `u32`.
+        let log_cluster_size = if features.ro_compat & RO_COMPAT_BIGALLOC != 0 {
+            le_u32(bytes, sb::LOG_CLUSTER_SIZE)
+        } else {
+            log_block_size
+        };
+        if !(log_block_size..=21).contains(&log_cluster_size) {
+            return None;
+        }
+        let blocks_per_cluster: u32 = 1 << (log_cluster_size - log_block_size);
         let block_count = split_u64(bytes, sb::BLOCKS_COUNT_LO, sb::BLOCKS_COUNT_HI, wide);
         let reserved = split_u64(bytes, sb::R_BLOCKS_COUNT_LO, sb::R_BLOCKS_COUNT_HI, wide);
         let size_bytes = block_count.checked_mul(u64::from(block_size))?;
+        // At most `size_bytes` once `valid` holds, so it can't overflow then.
+        let reserved_bytes = reserved.saturating_mul(u64::from(block_size));
         let valid = le_u32(bytes, sb::BLOCKS_PER_GROUP) > 0
             && le_u32(bytes, sb::INODES_PER_GROUP) > 0
             && block_count > u64::from(le_u32(bytes, sb::FIRST_DATA_BLOCK))
@@ -141,6 +162,8 @@ impl Superblock {
             block_size,
             block_count,
             size_bytes,
+            reserved_bytes,
+            blocks_per_cluster,
         })
     }
 
@@ -275,13 +298,11 @@ pub(super) fn read<R: BlockReader>(
             ))
         }),
         block_size_bytes: superblock.block_size,
+        cluster_size_bytes: superblock.block_size * superblock.blocks_per_cluster,
         block_count: superblock.block_count,
         size_bytes: filesystem_bytes,
         free_bytes,
-        // `parse` checks there are no more reserved blocks than blocks, so
-        // this is at most the size.
-        reserved_bytes: superblock.wide(sb::R_BLOCKS_COUNT_LO, sb::R_BLOCKS_COUNT_HI)
-            * u64::from(superblock.block_size),
+        reserved_bytes: superblock.reserved_bytes,
         inode_count: superblock.u32_at(sb::INODES_COUNT),
         free_inodes: superblock.u32_at(sb::FREE_INODES_COUNT),
         last_mounted: superblock.dynamic_string(sb::LAST_MOUNTED),
@@ -297,7 +318,8 @@ pub(super) fn read<R: BlockReader>(
 }
 
 /// Sums the free block counts of all group descriptors. The kernel keeps
-/// these current; the superblock's total is refreshed less often.
+/// these current; the superblock's total is refreshed less often. With
+/// bigalloc the descriptors count clusters, the superblock blocks.
 fn free_blocks_in_groups<R: BlockReader>(
     volume: &mut Volume<'_, R>,
     superblock: &Superblock,
@@ -319,7 +341,9 @@ fn free_blocks_in_groups<R: BlockReader>(
     // At most 2^32 blocks of 64 KiB: no overflow.
     let offset = (first_data_block + 1) * u64::from(superblock.block_size);
     let table = volume.read(offset, usize::try_from(table_len).expect("bounded above"))?;
-    Ok(table
+    // The sum stays far below 2^64: at most 2^21 descriptors (the 64 MiB
+    // cap) of at most 2^32 each.
+    table
         .chunks_exact(desc_len)
         .map(|d| {
             let hi = if desc_len >= gd::LEN_64BIT {
@@ -329,7 +353,11 @@ fn free_blocks_in_groups<R: BlockReader>(
             };
             hi << 16 | u64::from(le_u16(d, gd::FREE_BLOCKS_COUNT_LO))
         })
-        .sum())
+        .sum::<u64>()
+        .checked_mul(u64::from(superblock.blocks_per_cluster))
+        .ok_or(MetadataError::Inconsistent(
+            "the free cluster count is too large to be a block count",
+        ))
 }
 
 /// A NUL-padded string field; `None` when empty.
@@ -463,6 +491,24 @@ mod tests {
 
     fn put_u32(s: &mut [u8], at: usize, value: u32) {
         s[at..at + 4].copy_from_slice(&value.to_le_bytes());
+    }
+
+    #[test]
+    fn bigalloc_counts_free_clusters() {
+        let plain = ext(edited_ext4_volume(|_| {})).1;
+        let bigalloc = edited_ext4(|s| {
+            // Clusters of four blocks; the descriptors' counts stay as they
+            // are, so they now stand for four times as many blocks.
+            let ro_compat = le_u32(s, sb::FEATURE_RO_COMPAT) | RO_COMPAT_BIGALLOC;
+            put_u32(s, sb::FEATURE_RO_COMPAT, ro_compat);
+            let log_block = le_u32(s, sb::LOG_BLOCK_SIZE);
+            put_u32(s, sb::LOG_CLUSTER_SIZE, log_block + 2);
+        });
+        assert_eq!(bigalloc.block_size_bytes, plain.block_size_bytes);
+        assert_eq!(bigalloc.cluster_size_bytes, 4 * plain.block_size_bytes);
+        assert_eq!(plain.cluster_size_bytes, plain.block_size_bytes);
+        let free = |e: &Ext| *e.free_bytes.value().unwrap();
+        assert_eq!(free(&bigalloc), 4 * free(&plain));
     }
 
     /// Turns on the 64bit feature, which makes the high halves count.
