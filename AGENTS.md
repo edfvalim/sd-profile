@@ -87,3 +87,7 @@ Push both with `git push origin main vX.Y.Z` (the tag is lightweight, so
 `.github/workflows/release.yml`, which builds the Apple silicon and Intel
 binaries and publishes a GitHub release with the tag's `CHANGELOG.md`
 section as notes (a pre-release for `-rc.N` tags).
+
+After a final bump that follows release candidates, check `CHANGELOG.md`:
+cog has written the last candidate's section a second time (seen going
+from `v0.1.0-rc.1` to `v0.1.0`). Remove the duplicate before pushing.
