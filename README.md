@@ -90,10 +90,13 @@ binaries for Apple silicon (`aarch64-apple-darwin`) and Intel
 (`x86_64-apple-darwin`) Macs, each with a `.sha256` checksum.
 
 ```console
-$ curl -LO https://github.com/edfvalim/sd-profile/releases/download/v0.1.0-rc.1/sd-profile-v0.1.0-rc.1-aarch64-apple-darwin.tar.gz
-$ tar xzf sd-profile-v0.1.0-rc.1-aarch64-apple-darwin.tar.gz
-$ sudo install sd-profile-v0.1.0-rc.1-aarch64-apple-darwin/sd-profile /usr/local/bin/
+$ curl -LO https://github.com/edfvalim/sd-profile/releases/latest/download/sd-profile-aarch64-apple-darwin.tar.gz
+$ tar xzf sd-profile-aarch64-apple-darwin.tar.gz
+$ sudo install sd-profile-aarch64-apple-darwin/sd-profile /usr/local/bin/
 ```
+
+For an Intel Mac, use `x86_64-apple-darwin` in place of
+`aarch64-apple-darwin`.
 
 The binaries are not notarized. A copy downloaded with a browser is
 quarantined by macOS; clear that with

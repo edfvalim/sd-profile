@@ -27,7 +27,9 @@ jobs:
       - run: cargo build --release --locked --target ${{ matrix.target }}
       - name: package
         run: |
-          name="sd-profile-${GITHUB_REF_NAME}-${{ matrix.target }}"
+          # No version in the name, so releases/latest/download/<name>
+          # always points at the newest release's binary.
+          name="sd-profile-${{ matrix.target }}"
           mkdir "$name"
           cp "target/${{ matrix.target }}/release/sd-profile" README.md LICENSE "$name/"
           tar -czf "$name.tar.gz" "$name"
