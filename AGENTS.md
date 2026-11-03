@@ -82,7 +82,8 @@ for a release candidate. Releases happen when the user asks for one.
 `chore(version): vX.Y.Z` (the one exception to the scope list) and move
 cog's tag onto that commit. git, not cog, makes the commit because cog's
 own signing can't use the 1Password SSH key.
-Push both with `git push origin main --follow-tags`. The tag starts
+Push both with `git push origin main vX.Y.Z` (the tag is lightweight, so
+`--follow-tags` would skip it). The tag starts
 `.github/workflows/release.yml`, which builds the Apple silicon and Intel
 binaries and publishes a GitHub release with the tag's `CHANGELOG.md`
 section as notes (a pre-release for `-rc.N` tags).
