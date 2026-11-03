@@ -81,8 +81,26 @@ It runs on macOS. Linux support is planned.
 
 ## Install
 
-There are no prebuilt binaries or crates.io releases yet. Build from
-source; this needs macOS and Rust 1.98 or later.
+### Prebuilt binary
+
+Each [release](https://github.com/edfvalim/sd-profile/releases) has
+binaries for Apple silicon (`aarch64-apple-darwin`) and Intel
+(`x86_64-apple-darwin`) Macs, each with a `.sha256` checksum.
+
+```console
+$ curl -LO https://github.com/edfvalim/sd-profile/releases/download/v0.1.0-rc.1/sd-profile-v0.1.0-rc.1-aarch64-apple-darwin.tar.gz
+$ tar xzf sd-profile-v0.1.0-rc.1-aarch64-apple-darwin.tar.gz
+$ sudo install sd-profile-v0.1.0-rc.1-aarch64-apple-darwin/sd-profile /usr/local/bin/
+```
+
+The binaries are not notarized. A copy downloaded with a browser is
+quarantined by macOS; clear that with
+`xattr -d com.apple.quarantine sd-profile` (`curl` downloads aren't
+quarantined).
+
+### From source
+
+Needs Rust 1.98 or later.
 
 ```console
 $ cargo install --git https://github.com/edfvalim/sd-profile
