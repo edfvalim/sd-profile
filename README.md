@@ -1,5 +1,7 @@
 # sd-profile
 
+[![CI](https://github.com/edfvalim/sd-profile/actions/workflows/ci.yml/badge.svg)](https://github.com/edfvalim/sd-profile/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/edfvalim/sd-profile?include_prereleases)](https://github.com/edfvalim/sd-profile/releases)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 ![Platform: macOS](https://img.shields.io/badge/platform-macOS-lightgrey.svg)
 

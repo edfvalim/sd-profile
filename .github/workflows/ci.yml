@@ -1,0 +1,30 @@
+# The done checks from AGENTS.md on every push to main and every pull
+# request.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    # The platform code is macOS only, so lint and test there.
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      # rustup installs the toolchain pinned in rust-toolchain.toml.
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --check
+      - run: cargo clippy --all-targets --locked -- -D warnings
+      - run: cargo test --locked
+
+  deny:
+    # cargo-deny-action runs in a Linux container.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: EmbarkStudios/cargo-deny-action@v2
