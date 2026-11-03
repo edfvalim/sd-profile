@@ -1,6 +1,8 @@
 //! The readable report. Its wording and layout may change between versions;
 //! scripts should use `--json`.
 
+mod device;
+
 use std::io::{self, Write};
 
 use crate::model::{
@@ -25,10 +27,21 @@ const MAX_WIDTH: usize = 80;
 pub fn write(profile: &Profile, out: &mut impl Write) -> io::Result<()> {
     match &profile.target {
         Target::DiskImage { path } => {
+            // An image has no card, reader or mounts; the JSON says so, the
+            // report leaves the sections out.
             line(out, "Target", &format!("{} (disk image)", path.display()))?;
         }
+        Target::Device { .. } => device::write(profile, out)?,
     }
     write_layout(&profile.layout, out)
+}
+
+/// A field's value through `show`, or why it is unavailable.
+fn shown<T>(field: &Field<T>, show: impl FnOnce(&T) -> String) -> String {
+    match field {
+        Field::Known { value, .. } => show(value),
+        Field::Unavailable(reason) => format!("unavailable ({reason})"),
+    }
 }
 
 fn line(out: &mut impl Write, label: &str, value: &str) -> io::Result<()> {
@@ -54,16 +67,17 @@ fn write_table_section(layout: &Layout, out: &mut impl Write) -> io::Result<()> 
     line(
         out,
         "Size",
-        &format!("{} ({} bytes)", size(layout.size_bytes), layout.size_bytes),
+        &shown(&layout.size_bytes, |&bytes| {
+            format!("{} ({bytes} bytes)", size(bytes))
+        }),
     )?;
     line(
         out,
         "Sector size",
-        &format!(
-            "{} bytes ({} sectors)",
-            layout.block_size.bytes(),
-            layout.sectors()
-        ),
+        &shown(&layout.block_size, |block| match layout.sectors() {
+            Some(sectors) => format!("{} bytes ({sectors} sectors)", block.bytes()),
+            None => format!("{} bytes", block.bytes()),
+        }),
     )?;
     writeln!(out)?;
 

@@ -18,11 +18,23 @@ serde_json = "1.0.154"
 # Typed error enums in the library modules.
 thiserror = "2.0.21"
 
+[target.'cfg(unix)'.dependencies]
+# geteuid for the root check; on macOS also getfsstat for the mount table.
+libc = "0.2.191"
+
+[target.'cfg(target_os = "macos")'.dependencies]
+# Core Foundation types the I/O Registry hands out, converted to plain values.
+objc2-core-foundation = { version = "0.3.2", default-features = false, features = ["std", "CFArray", "CFData", "CFDictionary", "CFNumber", "CFString"] }
+# IOKit calls that walk the I/O Registry for card readers and cards.
+objc2-io-kit = { version = "0.3.2", default-features = false, features = ["std", "libc"] }
+
 [dev-dependencies]
 # Runs the built binary in the end-to-end tests.
 assert_cmd = "2.2.2"
 # Snapshot comparison of the end-to-end output.
 insta = "1.49.0"
+# Reads the `ioreg -a` captures the I/O Registry mapping is tested against.
+plist = "1.10.3"
 # Scratch directory for decompressed disk images.
 tempfile = "3.27.0"
 # Decompresses the disk image fixtures (committed as .img.zst).

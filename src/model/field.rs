@@ -7,9 +7,8 @@ use serde::ser::{Serialize, SerializeMap, Serializer};
 
 /// Where a value was read from.
 ///
-/// Serialized in snake case (`"partition_table"`). Later sources (the I/O
-/// Registry, `/sys`, card registers) are added as the parts that read them
-/// arrive.
+/// Serialized in snake case (`"partition_table"`). Later sources (`/sys`,
+/// card registers) are added as the parts that read them arrive.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Source {
@@ -29,6 +28,16 @@ pub enum Source {
     Superblock,
     /// The block group descriptors of an ext2, ext3 or ext4 volume.
     GroupDescriptors,
+    /// The size of the disk image file.
+    FileSize,
+    /// The SD specification, which fixes the value for every card (the
+    /// 512-byte sector).
+    SdSpecification,
+    /// The macOS I/O Registry: what Apple's drivers publish about the reader,
+    /// the card and the disk.
+    IoRegistry,
+    /// The OS's table of mounted filesystems (`getfsstat` on macOS).
+    MountTable,
 }
 
 /// Why a value is missing from the profile.
@@ -42,6 +51,17 @@ pub enum Unavailable {
     HiddenByUsbReader,
     /// The card does not support the feature this value describes.
     NotSupportedByCard,
+    /// The reader has no card in it.
+    NoCard,
+    /// The card is in the reader but not in use: ejected, or not set up by
+    /// the driver yet. The OS keeps its identity but has no disk for it.
+    CardInactive,
+    /// Reading the value needs root; run with `sudo`.
+    RequiresRoot,
+    /// The reader is powered down, as it is while no card is in use.
+    PoweredDown,
+    /// This version doesn't read the value yet.
+    NotImplemented,
     /// Reading the value failed; the text says how.
     ReadFailed(String),
 }
@@ -55,6 +75,11 @@ impl Unavailable {
             Self::NotExposedByOs => "not_exposed_by_os",
             Self::HiddenByUsbReader => "hidden_by_usb_reader",
             Self::NotSupportedByCard => "not_supported_by_card",
+            Self::NoCard => "no_card",
+            Self::CardInactive => "card_inactive",
+            Self::RequiresRoot => "requires_root",
+            Self::PoweredDown => "powered_down",
+            Self::NotImplemented => "not_implemented",
             Self::ReadFailed(_) => "read_failed",
         }
     }
@@ -67,6 +92,11 @@ impl fmt::Display for Unavailable {
             Self::NotExposedByOs => f.write_str("not exposed by this operating system"),
             Self::HiddenByUsbReader => f.write_str("hidden by the USB card reader"),
             Self::NotSupportedByCard => f.write_str("not supported by the card"),
+            Self::NoCard => f.write_str("no card in the reader"),
+            Self::CardInactive => f.write_str("the card is ejected or not set up yet"),
+            Self::RequiresRoot => f.write_str("needs root, run with sudo"),
+            Self::PoweredDown => f.write_str("the reader is powered down"),
+            Self::NotImplemented => f.write_str("this version doesn't read it yet"),
             Self::ReadFailed(detail) => write!(f, "read failed: {detail}"),
         }
     }
@@ -92,6 +122,27 @@ impl<T> Field<T> {
     #[must_use]
     pub fn known(value: T, source: Source) -> Self {
         Self::Known { value, source }
+    }
+
+    /// The value, if known.
+    #[must_use]
+    pub fn value(&self) -> Option<&T> {
+        match self {
+            Self::Known { value, .. } => Some(value),
+            Self::Unavailable(_) => None,
+        }
+    }
+
+    /// Applies `f` to a known value, keeping the source.
+    #[must_use]
+    pub fn map<U>(self, f: impl FnOnce(T) -> U) -> Field<U> {
+        match self {
+            Self::Known { value, source } => Field::Known {
+                value: f(value),
+                source,
+            },
+            Self::Unavailable(reason) => Field::Unavailable(reason),
+        }
     }
 }
 

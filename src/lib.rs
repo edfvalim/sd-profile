@@ -9,6 +9,7 @@ pub mod error;
 pub mod model;
 mod platform;
 mod render;
+mod sd;
 
 #[cfg(test)]
 mod test_support;

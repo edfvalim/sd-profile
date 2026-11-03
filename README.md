@@ -3,9 +3,11 @@
 Profiles SD and microSD cards from the command line: card identity, speed,
 reader, partition table, filesystems and mounts, as a readable report or JSON.
 
-Early development. macOS first, Linux later. This version reads disk image
-files (a card backup made with `dd`, a Raspberry Pi OS `.img`) and reports
-their partition table, filesystems and alignment; card devices come later.
+Early development. macOS first, Linux later. This version reports the card
+in a Mac's card reader (identity, speed, reader and mounts, from the I/O
+Registry, no root needed), and reads disk image files (a card backup made
+with `dd`, a Raspberry Pi OS `.img`) for their partition table, filesystems
+and alignment. Reading a card's partitions and filesystems comes next.
 
 ## Build
 
@@ -16,9 +18,51 @@ cargo build --release
 ## Usage
 
 ```
-sd-profile card.img           readable report
-sd-profile --json card.img    JSON
+sd-profile                    the card in this computer's card reader
+sd-profile /dev/disk6         the card whose disk is disk6, when there are several
+sd-profile card.img           a disk image
+sd-profile --json ...         JSON instead of the readable report
 ```
+
+```
+Target           /dev/disk6 (card in the built-in reader)
+
+Card             SDHC, 14.8 GiB (15938355200 bytes)
+  Manufacturer   0xdf (not a known manufacturer ID)
+  OEM ID         0x3428 ("4(")
+  Product        "SD"
+  Revision       2.0
+  Serial number  0x0000039e
+  Manufactured   2020-10
+  SD spec        3.0+ (macOS reports no version above this one)
+  Speed class    Class 10
+  UHS-II         not supported
+  Write protect  off
+
+Reader           Apple Built In SDXC Reader
+  Connection     built-in, PCI 17a0:9755 (subsystem 17a0:9755, revision 0x01)
+  PCIe link      5.0 GT/s x1 (PCIe gen 2)
+  UHS-II         supported
+  Card bus       UHS-I SDR104, 4 data lines, 200 MHz
+
+Mounts
+  disk6s1        /Volumes/BOOTFS (msdos, nosuid, nodev, noatime)
+
+Size             14.8 GiB (15938355200 bytes)
+Sector size      512 bytes (31129600 sectors)
+
+Partition table  unavailable (needs root, run with sudo)
+```
+
+The card's identity comes from its CID register as Apple's driver decodes
+it, and matches what `system_profiler SPCardReaderDataType` shows (which
+glues the OEM ID onto the product name, as `4(SD`). Manufacturer names come
+from a short sourced list; the SD Association doesn't publish the IDs, so
+unbranded cards often show none. A card behind a USB card reader is hidden
+from the OS: the report names the reader and its USB IDs, and the card's
+fields say `hidden_by_usb_reader`. Without a target, USB readers are found
+by their product name; a USB reader with an unusual name can be named by its
+disk instead.
 
 ```
 Target           card.img (disk image)
@@ -81,7 +125,7 @@ Targets are always opened read-only.
 | Code | Meaning |
 |---|---|
 | 0 | Profile printed |
-| 1 | The target can't be opened or isn't supported |
+| 1 | The target can't be opened or isn't supported, or no card reader was found |
 | 2 | Invalid arguments |
 
 ### JSON
@@ -102,6 +146,11 @@ UUIDs are lowercase, as `blkid` shows them.
 
 Inside a value the tool did read, a plain `null` means the thing is absent,
 not unknown: no volume ID, never mounted.
+
+`card`, `reader` and `mounts` describe the card, the reader it sits in and
+the filesystems mounted from it; for a disk image they are `null` with
+`"unavailable": "disk_image"`. A card that is in the reader but ejected keeps
+its identity, while its disk, mounts and bus speed are `card_inactive`.
 
 Partitions that can hold data are listed under `layout.volumes`, each with
 its `filesystem` (tagged by `type`) and `alignment` (tagged by `status`). A

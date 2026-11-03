@@ -1,0 +1,30 @@
+---
+source: src/app.rs
+expression: human(&profile)
+---
+Target           card in the built-in reader, no disk
+
+Card             SDHC, 14.8 GiB (15938355200 bytes)
+  Manufacturer   0xdf (not a known manufacturer ID)
+  OEM ID         0x3428 ("4(")
+  Product        "SD"
+  Revision       2.0
+  Serial number  0x0000039e
+  Manufactured   2020-10
+  SD spec        3.0+ (the OS reports no version above this one)
+  Speed class    Class 10
+  UHS-II         not supported
+  Write protect  off
+
+Reader           Apple Built In SDXC Reader
+  Connection     built-in, PCI 17a0:9755 (subsystem 17a0:9755, revision 0x01)
+  PCIe link      unavailable (the reader is powered down)
+  UHS-II         supported
+  Card bus       unavailable (the card is ejected or not set up yet)
+
+Mounts           unavailable (the card is ejected or not set up yet)
+
+Size             unavailable (the card is ejected or not set up yet)
+Sector size      unavailable (the card is ejected or not set up yet)
+
+Partition table  unavailable (the card is ejected or not set up yet)

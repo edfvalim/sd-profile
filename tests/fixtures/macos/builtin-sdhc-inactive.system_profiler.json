@@ -1,0 +1,25 @@
+{
+  "SPCardReaderDataType" : [
+    {
+      "_items" : [
+        {
+          "_name" : "SDHC Card (Class 10)",
+          "spcardreader_card_manufacturer-id" : "0xdf",
+          "spcardreader_card_manufacturing_date" : "2020-10",
+          "spcardreader_card_productname" : "4(SD",
+          "spcardreader_card_productrevision" : "2.0",
+          "spcardreader_card_serialnumber" : "0x39e",
+          "spcardreader_card_specversion" : "3.0"
+        }
+      ],
+      "_name" : "spcardreader",
+      "spcardreader_device-id" : "0x9755",
+      "spcardreader_link-speed" : "Off",
+      "spcardreader_link-width" : "Off",
+      "spcardreader_revision-id" : "0x0001",
+      "spcardreader_subsystem_vendor-id" : "0x17a0",
+      "spcardreader_subsystem-id" : "0x9755",
+      "spcardreader_vendor-id" : "0x17a0"
+    }
+  ]
+}

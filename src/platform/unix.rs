@@ -35,6 +35,40 @@ pub enum OpenError {
     NotADisk { path: PathBuf },
 }
 
+/// The process runs as root, so it can open device nodes.
+#[must_use]
+pub fn is_root() -> bool {
+    // SAFETY: geteuid has no preconditions and cannot fail.
+    unsafe { libc::geteuid() == 0 }
+}
+
+/// Says what kind of target `path` names, without opening it. Device nodes
+/// can be looked at without root, but not opened.
+///
+/// # Errors
+///
+/// [`OpenError::Io`] if the path can't be inspected,
+/// [`OpenError::NotADisk`] for directories, sockets and the like.
+pub fn target_kind(path: &Path) -> Result<TargetKind, OpenError> {
+    let metadata = std::fs::metadata(path).map_err(|source| OpenError::Io {
+        path: path.to_path_buf(),
+        source,
+    })?;
+    kind_of(metadata.file_type(), path)
+}
+
+fn kind_of(file_type: std::fs::FileType, path: &Path) -> Result<TargetKind, OpenError> {
+    if file_type.is_file() {
+        Ok(TargetKind::DiskImage)
+    } else if file_type.is_block_device() || file_type.is_char_device() {
+        Ok(TargetKind::Device)
+    } else {
+        Err(OpenError::NotADisk {
+            path: path.to_path_buf(),
+        })
+    }
+}
+
 /// Opens `path` read-only and says what kind of target it is.
 ///
 /// Read-only is the whole point: `File::open` uses `O_RDONLY`, and nothing in
@@ -51,16 +85,7 @@ pub fn open_read_only(path: &Path) -> Result<OpenedTarget, OpenError> {
     };
     let file = File::open(path).map_err(io_error)?;
     let metadata = file.metadata().map_err(io_error)?;
-    let file_type = metadata.file_type();
-    let kind = if file_type.is_file() {
-        TargetKind::DiskImage
-    } else if file_type.is_block_device() || file_type.is_char_device() {
-        TargetKind::Device
-    } else {
-        return Err(OpenError::NotADisk {
-            path: path.to_path_buf(),
-        });
-    };
+    let kind = kind_of(metadata.file_type(), path)?;
     Ok(OpenedTarget {
         file,
         kind,
@@ -88,6 +113,14 @@ mod tests {
     fn dev_null_is_device() {
         let opened = open_read_only(Path::new("/dev/null")).unwrap();
         assert_eq!(opened.kind, TargetKind::Device);
+    }
+
+    #[test]
+    fn device_kind_needs_no_open() {
+        assert_eq!(
+            target_kind(Path::new("/dev/null")).unwrap(),
+            TargetKind::Device
+        );
     }
 
     #[test]

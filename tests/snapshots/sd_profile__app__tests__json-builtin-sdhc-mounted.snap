@@ -1,0 +1,153 @@
+---
+source: src/app.rs
+expression: json(&profile)
+---
+{
+  "schema_version": 1,
+  "target": {
+    "kind": "device",
+    "disk": {
+      "name": "disk6",
+      "path": "/dev/disk6",
+      "raw_path": "/dev/rdisk6"
+    }
+  },
+  "card": {
+    "value": {
+      "type": {
+        "value": "sdhc",
+        "source": "io_registry"
+      },
+      "capacity_bytes": {
+        "value": 15938355200,
+        "source": "io_registry"
+      },
+      "manufacturer": {
+        "value": {
+          "id": "0xdf",
+          "name": null
+        },
+        "source": "io_registry"
+      },
+      "oem_id": {
+        "value": {
+          "id": "0x3428",
+          "text": "4("
+        },
+        "source": "io_registry"
+      },
+      "product_name": {
+        "value": "SD",
+        "source": "io_registry"
+      },
+      "product_revision": {
+        "value": "2.0",
+        "source": "io_registry"
+      },
+      "serial_number": {
+        "value": "0x0000039e",
+        "source": "io_registry"
+      },
+      "manufacturing_date": {
+        "value": "2020-10",
+        "source": "io_registry"
+      },
+      "spec_version": {
+        "value": "3.0+",
+        "source": "io_registry"
+      },
+      "speed_class": {
+        "value": 10,
+        "source": "io_registry"
+      },
+      "uhs_ii_supported": {
+        "value": false,
+        "source": "io_registry"
+      },
+      "write_protect": {
+        "switch": {
+          "value": false,
+          "source": "io_registry"
+        },
+        "register": {
+          "value": false,
+          "source": "io_registry"
+        }
+      }
+    },
+    "source": "io_registry"
+  },
+  "reader": {
+    "value": {
+      "connection": {
+        "kind": "built_in",
+        "pci": {
+          "vendor_id": "0x17a0",
+          "device_id": "0x9755",
+          "subsystem_vendor_id": "0x17a0",
+          "subsystem_id": "0x9755",
+          "revision_id": "0x01",
+          "link": {
+            "value": {
+              "generation": 2,
+              "transfer_rate": "5.0 GT/s",
+              "width": 1
+            },
+            "source": "io_registry"
+          }
+        }
+      },
+      "vendor_name": {
+        "value": "Apple",
+        "source": "io_registry"
+      },
+      "product_name": {
+        "value": "Built In SDXC Reader",
+        "source": "io_registry"
+      },
+      "uhs_ii_supported": {
+        "value": true,
+        "source": "io_registry"
+      },
+      "card_link": {
+        "value": {
+          "speed_mode": "sdr104",
+          "bus_width": 4,
+          "clock_khz": 200000
+        },
+        "source": "io_registry"
+      }
+    },
+    "source": "io_registry"
+  },
+  "mounts": {
+    "value": [
+      {
+        "device": "disk6s1",
+        "mount_point": "/Volumes/BOOTFS",
+        "os_fs_type": "msdos",
+        "options": [
+          "nosuid",
+          "nodev",
+          "noatime"
+        ]
+      }
+    ],
+    "source": "mount_table"
+  },
+  "layout": {
+    "size_bytes": {
+      "value": 15938355200,
+      "source": "io_registry"
+    },
+    "block_size": {
+      "value": 512,
+      "source": "io_registry"
+    },
+    "partition_table": {
+      "value": null,
+      "unavailable": "requires_root"
+    },
+    "volumes": []
+  }
+}

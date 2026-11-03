@@ -9,9 +9,11 @@ use clap::Parser;
 #[derive(Debug, Parser)]
 #[command(version)]
 pub struct Args {
-    /// Disk image to profile, such as a card backup made with `dd` or a
-    /// Raspberry Pi OS `.img`. Profiling devices comes in a later version.
-    pub target: PathBuf,
+    /// Disk image or card to profile. A disk image is a file such as a card
+    /// backup made with `dd` or a Raspberry Pi OS `.img`; a card is its
+    /// disk's device, like `/dev/disk6`. Without it, the card in this
+    /// computer's card reader.
+    pub target: Option<PathBuf>,
 
     /// Print the profile as JSON instead of the readable report.
     #[arg(long)]
@@ -50,10 +52,15 @@ mod tests {
     fn json_flag_selects_format() {
         let args = Args::parse_from(["sd-profile", "--json", "card.img"]);
         assert_eq!(args.format(), Format::Json);
-        assert_eq!(args.target, PathBuf::from("card.img"));
+        assert_eq!(args.target, Some(PathBuf::from("card.img")));
         assert_eq!(
             Args::parse_from(["sd-profile", "card.img"]).format(),
             Format::Human
         );
+    }
+
+    #[test]
+    fn target_is_optional() {
+        assert_eq!(Args::parse_from(["sd-profile"]).target, None);
     }
 }

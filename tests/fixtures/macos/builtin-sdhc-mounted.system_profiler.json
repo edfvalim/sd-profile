@@ -1,0 +1,46 @@
+{
+  "SPCardReaderDataType" : [
+    {
+      "_items" : [
+        {
+          "_name" : "SDHC Card (Class 10)",
+          "bsd_name" : "disk6",
+          "partition_map_type" : "master_boot_record_partition_map_type",
+          "removable_media" : "yes",
+          "size" : "15,94 GB",
+          "size_in_bytes" : 15938355200,
+          "smart_status" : "Verified",
+          "spcardreader_card_manufacturer-id" : "0xdf",
+          "spcardreader_card_manufacturing_date" : "2020-10",
+          "spcardreader_card_productname" : "4(SD",
+          "spcardreader_card_productrevision" : "2.0",
+          "spcardreader_card_serialnumber" : "0x39e",
+          "spcardreader_card_specversion" : "3.0",
+          "volumes" : [
+            {
+              "_name" : "BOOTFS",
+              "bsd_name" : "disk6s1",
+              "file_system" : "MS-DOS FAT32",
+              "free_space" : "15,93 GB",
+              "free_space_in_bytes" : 15926493184,
+              "iocontent" : "Windows_FAT_32",
+              "mount_point" : "/Volumes/BOOTFS",
+              "size" : "15,93 GB",
+              "size_in_bytes" : 15934160896,
+              "volume_uuid" : "95B5A9D2-10E5-32A8-81BA-0C35AEAEC1DF",
+              "writable" : "yes"
+            }
+          ]
+        }
+      ],
+      "_name" : "spcardreader",
+      "spcardreader_device-id" : "0x9755",
+      "spcardreader_link-speed" : "5.0 GT/s",
+      "spcardreader_link-width" : "x1",
+      "spcardreader_revision-id" : "0x0001",
+      "spcardreader_subsystem_vendor-id" : "0x17a0",
+      "spcardreader_subsystem-id" : "0x9755",
+      "spcardreader_vendor-id" : "0x17a0"
+    }
+  ]
+}

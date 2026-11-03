@@ -5,7 +5,7 @@ use std::fmt;
 use serde::Serialize;
 use serde::ser::{SerializeMap, Serializer};
 
-use super::field::Field;
+use super::field::{Field, Unavailable};
 use super::guid::Guid;
 use super::partition_type::{GptType, MbrType};
 use super::volume::Volume;
@@ -141,8 +141,8 @@ impl fmt::Display for PartitionNumber {
 /// Size, sector size, partition table and volumes of the target.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct Layout {
-    pub size_bytes: u64,
-    pub block_size: BlockSize,
+    pub size_bytes: Field<u64>,
+    pub block_size: Field<BlockSize>,
     pub partition_table: Field<PartitionTable>,
     /// The data partitions in table order (extended partitions hold no data
     /// and are left out), or the whole disk when a filesystem spans it.
@@ -151,10 +151,26 @@ pub struct Layout {
 }
 
 impl Layout {
-    /// Number of whole sectors on the disk.
+    /// A layout nothing could be read for, all for the same reason.
     #[must_use]
-    pub fn sectors(&self) -> u64 {
-        self.size_bytes / u64::from(self.block_size.0)
+    pub fn unavailable(reason: &Unavailable) -> Self {
+        Self {
+            size_bytes: Field::Unavailable(reason.clone()),
+            block_size: Field::Unavailable(reason.clone()),
+            partition_table: Field::Unavailable(reason.clone()),
+            volumes: Vec::new(),
+        }
+    }
+
+    /// Number of whole sectors on the disk, when both sizes are known.
+    #[must_use]
+    pub fn sectors(&self) -> Option<u64> {
+        match (&self.size_bytes, &self.block_size) {
+            (Field::Known { value: size, .. }, Field::Known { value: block, .. }) => {
+                Some(size / u64::from(block.0))
+            }
+            _ => None,
+        }
     }
 }
 

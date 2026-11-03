@@ -1,0 +1,1353 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<dict>
+		<key>#address-cells</key>
+		<data>
+		AQAAAA==
+		</data>
+		<key>#size-cells</key>
+		<data>
+		AAAAAA==
+		</data>
+		<key>AAPL,phandle</key>
+		<data>
+		TgAAAA==
+		</data>
+		<key>Capability Offsets</key>
+		<array>
+			<dict>
+				<key>capability</key>
+				<string>PCIExpressCapability</string>
+				<key>offset</key>
+				<integer>128</integer>
+			</dict>
+			<dict>
+				<key>capability</key>
+				<string>MSICapability</string>
+				<key>offset</key>
+				<integer>224</integer>
+			</dict>
+			<dict>
+				<key>capability</key>
+				<string>PowerManagementCapability</string>
+				<key>offset</key>
+				<integer>248</integer>
+			</dict>
+			<dict>
+				<key>capability</key>
+				<string>VSEC</string>
+				<key>offset</key>
+				<integer>256</integer>
+			</dict>
+			<dict>
+				<key>capability</key>
+				<string>LatencyToleranceReportingCapability</string>
+				<key>offset</key>
+				<integer>264</integer>
+			</dict>
+			<dict>
+				<key>capability</key>
+				<string>L1PMSubstatesCapability</string>
+				<key>offset</key>
+				<integer>272</integer>
+			</dict>
+			<dict>
+				<key>capability</key>
+				<string>ErrorReportingCapability</string>
+				<key>offset</key>
+				<integer>512</integer>
+			</dict>
+		</array>
+		<key>IOChildIndex</key>
+		<integer>1</integer>
+		<key>IODeviceMemory</key>
+		<array>
+			<array>
+				<dict>
+					<key>address</key>
+					<integer>24696061952</integer>
+					<key>length</key>
+					<integer>4096</integer>
+				</dict>
+			</array>
+		</array>
+		<key>IOInterruptControllers</key>
+		<array>
+			<string>IOInterruptController000000B6</string>
+			<string>ApplePCIEMSIController-apcie</string>
+		</array>
+		<key>IOInterruptSpecifiers</key>
+		<array>
+			<data>
+			DgAAAA==
+			</data>
+			<data>
+			NQYAAAAAAQA=
+			</data>
+		</array>
+		<key>IOName</key>
+		<string>pci17a0,9755</string>
+		<key>IOObjectClass</key>
+		<string>IOPCIDevice</string>
+		<key>IOObjectRetainCount</key>
+		<integer>18</integer>
+		<key>IOPCIAERCapabilities</key>
+		<integer>160</integer>
+		<key>IOPCIDeviceDeviceTreeEntry</key>
+		<string>IOService is not serializable</string>
+		<key>IOPCIDeviceMapperPageSize</key>
+		<integer>16384</integer>
+		<key>IOPCIDeviceMemoryMapBase</key>
+		<integer>4525</integer>
+		<key>IOPCIDeviceMemoryMapSize</key>
+		<integer>60946</integer>
+		<key>IOPCIExpressCapabilities</key>
+		<integer>2</integer>
+		<key>IOPCIExpressDeviceCapabilities</key>
+		<integer>36769</integer>
+		<key>IOPCIExpressDeviceCapabilities2</key>
+		<integer>788511</integer>
+		<key>IOPCIExpressLinkCapabilities</key>
+		<integer>1430776850</integer>
+		<key>IOPCIExpressLinkCapabilities2</key>
+		<integer>6</integer>
+		<key>IOPCIExpressLinkStatus</key>
+		<integer>12306</integer>
+		<key>IOPCIL1PMCapabilities</key>
+		<integer>16449311</integer>
+		<key>IOPCIMSIMessageControl</key>
+		<integer>128</integer>
+		<key>IOPCIMSIMode</key>
+		<true/>
+		<key>IOPCIPowerManagementCapabilities</key>
+		<integer>-138215423</integer>
+		<key>IOPCIResourced</key>
+		<true/>
+		<key>IOPMPCIConfigSpaceVolatile</key>
+		<false/>
+		<key>IOPMResetPowerStateOnWake</key>
+		<true/>
+		<key>IOPowerManagement</key>
+		<dict>
+			<key>CapabilityFlags</key>
+			<integer>258</integer>
+			<key>ChildProxyPowerState</key>
+			<integer>2</integer>
+			<key>ChildrenPowerState</key>
+			<integer>2</integer>
+			<key>CurrentPowerState</key>
+			<integer>2</integer>
+			<key>DevicePowerState</key>
+			<integer>0</integer>
+			<key>DriverPowerState</key>
+			<integer>0</integer>
+			<key>MaxPowerState</key>
+			<integer>3</integer>
+		</dict>
+		<key>IORegistryEntryChildren</key>
+		<array>
+			<dict>
+				<key>AEREnableStat</key>
+				<false/>
+				<key>CEEnableStat</key>
+				<false/>
+				<key>CFBundleIdentifier</key>
+				<string>com.apple.driver.AppleSDXC</string>
+				<key>CFBundleIdentifierKernel</key>
+				<string>com.apple.driver.AppleSDXC</string>
+				<key>IOClass</key>
+				<string>AppleSDXC</string>
+				<key>IOMatchCategory</key>
+				<string>IODefaultMatchCategory</string>
+				<key>IOMatchedAtBoot</key>
+				<true/>
+				<key>IONameMatch</key>
+				<array>
+					<string>pci17a0,9755</string>
+				</array>
+				<key>IONameMatched</key>
+				<string>pci17a0,9755</string>
+				<key>IOObjectClass</key>
+				<string>AppleSDXC</string>
+				<key>IOObjectRetainCount</key>
+				<integer>12</integer>
+				<key>IOPCIPauseCompatible</key>
+				<true/>
+				<key>IOPCIUseDeviceMapper</key>
+				<true/>
+				<key>IOPMResetPowerStateOnWake</key>
+				<true/>
+				<key>IOPersonalityPublisher</key>
+				<string>com.apple.driver.AppleSDXC</string>
+				<key>IOPowerManagement</key>
+				<dict>
+					<key>CapabilityFlags</key>
+					<integer>49152</integer>
+					<key>ChildrenPowerState</key>
+					<integer>2</integer>
+					<key>CurrentPowerState</key>
+					<integer>2</integer>
+					<key>DriverPowerState</key>
+					<integer>0</integer>
+					<key>MaxPowerState</key>
+					<integer>3</integer>
+				</dict>
+				<key>IOProbeScore</key>
+				<integer>0</integer>
+				<key>IOProviderClass</key>
+				<string>IOPCIDevice</string>
+				<key>IORegistryEntryChildren</key>
+				<array>
+					<dict>
+						<key>64-bit</key>
+						<true/>
+						<key>ACM</key>
+						<integer>2</integer>
+						<key>AuthorizationPending</key>
+						<false/>
+						<key>AuthorizationRequired</key>
+						<true/>
+						<key>AutoMatched</key>
+						<false/>
+						<key>Base Frequency</key>
+						<integer>50</integer>
+						<key>BuiltIn</key>
+						<true/>
+						<key>Bus VDD2</key>
+						<integer>5</integer>
+						<key>Bus Voltage</key>
+						<integer>3300</integer>
+						<key>Bus Width</key>
+						<integer>4</integer>
+						<key>Calculated Clock Frequency (MHz)</key>
+						<integer>200</integer>
+						<key>Card Characteristics</key>
+						<dict>
+							<key>Application ID</key>
+							<integer>13352</integer>
+							<key>Block Count</key>
+							<integer>31129600</integer>
+							<key>CSD Protect Enabled</key>
+							<false/>
+							<key>Card Type</key>
+							<string>SDHC</string>
+							<key>Manufacturer ID</key>
+							<integer>223</integer>
+							<key>Manufacturing Date</key>
+							<string>2020-10</string>
+							<key>Product Name</key>
+							<string>SD</string>
+							<key>Product Revision Level</key>
+							<string>2.0</string>
+							<key>Serial Number</key>
+							<integer>926</integer>
+							<key>Specification Version</key>
+							<string>3.0</string>
+							<key>Speed Class</key>
+							<integer>4</integer>
+							<key>UHS-II Mode Enabled</key>
+							<false/>
+							<key>UHS-II Supported</key>
+							<false/>
+							<key>Write Protect Enabled</key>
+							<false/>
+						</dict>
+						<key>Card Configuration Count</key>
+						<integer>2</integer>
+						<key>Card Configured</key>
+						<true/>
+						<key>Card Present</key>
+						<true/>
+						<key>Clock Divisor</key>
+						<integer>0</integer>
+						<key>Clock Multiplier</key>
+						<integer>3</integer>
+						<key>ConnectionActive</key>
+						<true/>
+						<key>ConnectionCount</key>
+						<integer>3</integer>
+						<key>ConnectionUUID</key>
+						<string>138040DD-03AF-4C15-B258-AAA07E4E8649</string>
+						<key>Description</key>
+						<string>Port-SD Card@1</string>
+						<key>FeaturesEnabled</key>
+						<array>
+							<string>TRM</string>
+						</array>
+						<key>FeaturesSupported</key>
+						<array>
+							<string>TRM</string>
+						</array>
+						<key>Highest Speed Mode</key>
+						<integer>3</integer>
+						<key>Host Supports UHS-II</key>
+						<true/>
+						<key>ID TRM Active</key>
+						<false/>
+						<key>IOGeneralInterest</key>
+						<string>IOCommand is not serializable</string>
+						<key>IOMaximumSegmentAddressableBitCount</key>
+						<integer>64</integer>
+						<key>IOMaximumSegmentByteCountRead</key>
+						<integer>65536</integer>
+						<key>IOMaximumSegmentByteCountWrite</key>
+						<integer>65536</integer>
+						<key>IOMaximumSegmentCountRead</key>
+						<integer>1024</integer>
+						<key>IOMaximumSegmentCountWrite</key>
+						<integer>1024</integer>
+						<key>IOMinimumSegmentAlignmentByteCount</key>
+						<integer>512</integer>
+						<key>IOObjectClass</key>
+						<string>AppleSDXCSlot</string>
+						<key>IOObjectRetainCount</key>
+						<integer>17</integer>
+						<key>IOPMResetPowerStateOnWake</key>
+						<true/>
+						<key>IOPowerManagement</key>
+						<dict>
+							<key>CapabilityFlags</key>
+							<integer>49152</integer>
+							<key>ChildrenPowerState</key>
+							<integer>2</integer>
+							<key>CurrentPowerState</key>
+							<integer>2</integer>
+							<key>DriverPowerState</key>
+							<integer>0</integer>
+							<key>MaxPowerState</key>
+							<integer>3</integer>
+						</dict>
+						<key>IORegistryEntryChildren</key>
+						<array>
+							<dict>
+								<key>Active</key>
+								<true/>
+								<key>Application ID</key>
+								<integer>13352</integer>
+								<key>AuthenticationRequired</key>
+								<false/>
+								<key>AuthenticationStatus</key>
+								<integer>0</integer>
+								<key>AuthenticationStatusDescription</key>
+								<string>Idle</string>
+								<key>AuthorizationRequired</key>
+								<true/>
+								<key>AuthorizationStatus</key>
+								<integer>2</integer>
+								<key>AuthorizationStatusDescription</key>
+								<string>Policy Authorized</string>
+								<key>Card Type</key>
+								<integer>3</integer>
+								<key>Card Type Description</key>
+								<string>SDHC</string>
+								<key>DriverStatus</key>
+								<integer>0</integer>
+								<key>DriverStatusDescription</key>
+								<string>Not Monitored</string>
+								<key>HashStatus</key>
+								<integer>3</integer>
+								<key>HashStatusDescription</key>
+								<string>Cached</string>
+								<key>IOGeneralInterest</key>
+								<string>IOCommand is not serializable</string>
+								<key>IOObjectClass</key>
+								<string>IOPortTransportStateSD</string>
+								<key>IOObjectRetainCount</key>
+								<integer>9</integer>
+								<key>IORegistryEntryID</key>
+								<integer>4294970220</integer>
+								<key>IORegistryEntryName</key>
+								<string>SD</string>
+								<key>IOServiceBusyState</key>
+								<integer>0</integer>
+								<key>IOServiceBusyTime</key>
+								<integer>9308541</integer>
+								<key>IOServiceState</key>
+								<integer>30</integer>
+								<key>IOUserClientClass</key>
+								<string>IOPortTransportUserClient</string>
+								<key>Index</key>
+								<integer>0</integer>
+								<key>Manufacture Date</key>
+								<string>2020-10</string>
+								<key>Manufacturer ID</key>
+								<integer>223</integer>
+								<key>Metadata</key>
+								<dict>
+									<key>Application ID</key>
+									<integer>13352</integer>
+									<key>Manufacture Date</key>
+									<string>2020-10</string>
+									<key>Manufacturer ID</key>
+									<integer>223</integer>
+									<key>Product Name</key>
+									<string>SD</string>
+									<key>Product Revision Level</key>
+									<string>2.0</string>
+									<key>Serial Number</key>
+									<integer>926</integer>
+								</dict>
+								<key>ParentBuiltInPortNumber</key>
+								<integer>1</integer>
+								<key>ParentBuiltInPortType</key>
+								<integer>11</integer>
+								<key>ParentBuiltInPortTypeDescription</key>
+								<string>SD Card</string>
+								<key>ParentPortBuiltIn</key>
+								<true/>
+								<key>ParentPortNumber</key>
+								<integer>1</integer>
+								<key>ParentPortType</key>
+								<integer>11</integer>
+								<key>ParentPortTypeDescription</key>
+								<string>SD Card</string>
+								<key>Product Name</key>
+								<string>SD</string>
+								<key>Product Revision Level</key>
+								<string>2.0</string>
+								<key>Serial Number</key>
+								<integer>926</integer>
+								<key>Specification Version</key>
+								<integer>4</integer>
+								<key>Specification Version Description</key>
+								<string>3.x</string>
+								<key>Speed Class</key>
+								<integer>4</integer>
+								<key>Speed Class Description</key>
+								<string>Class 3</string>
+								<key>TRM_CacheMiss</key>
+								<false/>
+								<key>TRM_DeviceLocked</key>
+								<false/>
+								<key>TRM_GracePeriodReason</key>
+								<integer>4</integer>
+								<key>TRM_GracePeriodReasonDescription</key>
+								<string>Device Unlocked</string>
+								<key>TRM_IdentificationRestricted</key>
+								<false/>
+								<key>TRM_Profile</key>
+								<integer>2</integer>
+								<key>TRM_ProfileDescription</key>
+								<string>Ask for New Accessories</string>
+								<key>TRM_RelaxedPeriod</key>
+								<true/>
+								<key>TRM_State</key>
+								<integer>2</integer>
+								<key>TRM_StateDescription</key>
+								<string>Limited</string>
+								<key>TRM_TransportRestricted</key>
+								<false/>
+								<key>TRM_TransportSupervised</key>
+								<true/>
+								<key>TransportDescription</key>
+								<string>Port-SD Card@1/SD</string>
+								<key>TransportType</key>
+								<integer>12</integer>
+								<key>TransportTypeDescription</key>
+								<string>SD</string>
+								<key>Tunneled</key>
+								<false/>
+							</dict>
+							<dict>
+								<key>CFBundleIdentifier</key>
+								<string>com.apple.driver.AppleSDXC</string>
+								<key>CFBundleIdentifierKernel</key>
+								<string>com.apple.driver.AppleSDXC</string>
+								<key>Device Characteristics</key>
+								<dict>
+									<key>Product Name</key>
+									<string>Built In SDXC Reader</string>
+									<key>Vendor Name</key>
+									<string>Apple</string>
+								</dict>
+								<key>IOClass</key>
+								<string>AppleSDXCBlockStorageDevice</string>
+								<key>IOCommandPoolSize</key>
+								<integer>64</integer>
+								<key>IOMatchCategory</key>
+								<string>IODefaultMatchCategory</string>
+								<key>IOMatchedAtBoot</key>
+								<true/>
+								<key>IOMaximumBlockCountRead</key>
+								<integer>65535</integer>
+								<key>IOMaximumBlockCountWrite</key>
+								<integer>65535</integer>
+								<key>IOMediaIcon</key>
+								<dict>
+									<key>CFBundleIdentifier</key>
+									<string>com.apple.iokit.IOSCSIArchitectureModelFamily</string>
+									<key>IOBundleResourceFile</key>
+									<string>SD.icns</string>
+								</dict>
+								<key>IOObjectClass</key>
+								<string>AppleSDXCBlockStorageDevice</string>
+								<key>IOObjectRetainCount</key>
+								<integer>11</integer>
+								<key>IOPMResetPowerStateOnWake</key>
+								<true/>
+								<key>IOPersonalityPublisher</key>
+								<string>com.apple.driver.AppleSDXC</string>
+								<key>IOPowerManagement</key>
+								<dict>
+									<key>ActivityTickles</key>
+									<integer>1032</integer>
+									<key>CapabilityFlags</key>
+									<integer>49216</integer>
+									<key>CurrentPowerState</key>
+									<integer>3</integer>
+									<key>DevicePowerState</key>
+									<integer>3</integer>
+									<key>DriverPowerState</key>
+									<integer>0</integer>
+									<key>IdleTimerElapsedTime</key>
+									<integer>4807</integer>
+									<key>IdleTimerPeriod</key>
+									<integer>60000</integer>
+									<key>MaxPowerState</key>
+									<integer>4</integer>
+									<key>TimeSinceLastTickle</key>
+									<integer>1764</integer>
+								</dict>
+								<key>IOProbeScore</key>
+								<integer>0</integer>
+								<key>IOProviderClass</key>
+								<string>AppleSDXCSlot</string>
+								<key>IORegistryEntryChildren</key>
+								<array>
+									<dict>
+										<key>CFBundleIdentifier</key>
+										<string>com.apple.iokit.IOStorageFamily</string>
+										<key>CFBundleIdentifierKernel</key>
+										<string>com.apple.iokit.IOStorageFamily</string>
+										<key>IOClass</key>
+										<string>IOBlockStorageDriver</string>
+										<key>IOGeneralInterest</key>
+										<string>IOCommand is not serializable</string>
+										<key>IOMatchCategory</key>
+										<string>IODefaultMatchCategory</string>
+										<key>IOMatchedAtBoot</key>
+										<true/>
+										<key>IOObjectClass</key>
+										<string>IOBlockStorageDriver</string>
+										<key>IOObjectRetainCount</key>
+										<integer>8</integer>
+										<key>IOPersonalityPublisher</key>
+										<string>com.apple.iokit.IOStorageFamily</string>
+										<key>IOPowerManagement</key>
+										<dict>
+											<key>CapabilityFlags</key>
+											<integer>0</integer>
+											<key>CurrentPowerState</key>
+											<integer>0</integer>
+										</dict>
+										<key>IOProbeScore</key>
+										<integer>0</integer>
+										<key>IOPropertyMatch</key>
+										<dict>
+											<key>device-type</key>
+											<string>Generic</string>
+										</dict>
+										<key>IOProviderClass</key>
+										<string>IOBlockStorageDevice</string>
+										<key>IORegistryEntryChildren</key>
+										<array>
+											<dict>
+												<key>BSD Major</key>
+												<integer>1</integer>
+												<key>BSD Minor</key>
+												<integer>24</integer>
+												<key>BSD Name</key>
+												<string>disk6</string>
+												<key>BSD Unit</key>
+												<integer>6</integer>
+												<key>Content</key>
+												<string>FDisk_partition_scheme</string>
+												<key>Content Hint</key>
+												<string></string>
+												<key>Ejectable</key>
+												<true/>
+												<key>IOBusyInterest</key>
+												<string>IOCommand is not serializable</string>
+												<key>IOGeneralInterest</key>
+												<string>IOCommand is not serializable</string>
+												<key>IOObjectClass</key>
+												<string>IOMedia</string>
+												<key>IOObjectRetainCount</key>
+												<integer>12</integer>
+												<key>IORegistryEntryChildren</key>
+												<array>
+													<dict>
+														<key>CFBundleIdentifier</key>
+														<string>com.apple.iokit.IOStorageFamily</string>
+														<key>CFBundleIdentifierKernel</key>
+														<string>com.apple.iokit.IOStorageFamily</string>
+														<key>IOClass</key>
+														<string>IOMediaBSDClient</string>
+														<key>IOMatchCategory</key>
+														<string>IOMediaBSDClient</string>
+														<key>IOMatchedAtBoot</key>
+														<true/>
+														<key>IOObjectClass</key>
+														<string>IOMediaBSDClient</string>
+														<key>IOObjectRetainCount</key>
+														<integer>6</integer>
+														<key>IOPersonalityPublisher</key>
+														<string>com.apple.iokit.IOStorageFamily</string>
+														<key>IOProbeScore</key>
+														<integer>30000</integer>
+														<key>IOProviderClass</key>
+														<string>IOMedia</string>
+														<key>IORegistryEntryID</key>
+														<integer>4294977245</integer>
+														<key>IORegistryEntryName</key>
+														<string>IOMediaBSDClient</string>
+														<key>IOResourceMatch</key>
+														<string>IOBSD</string>
+														<key>IOServiceBusyState</key>
+														<integer>0</integer>
+														<key>IOServiceBusyTime</key>
+														<integer>2339375</integer>
+														<key>IOServiceState</key>
+														<integer>30</integer>
+													</dict>
+													<dict>
+														<key>CFBundleIdentifier</key>
+														<string>com.apple.iokit.IOStorageFamily</string>
+														<key>CFBundleIdentifierKernel</key>
+														<string>com.apple.iokit.IOStorageFamily</string>
+														<key>Content Mask</key>
+														<string>FDisk_partition_scheme</string>
+														<key>Content Table</key>
+														<dict>
+															<key>0x01</key>
+															<string>DOS_FAT_12</string>
+															<key>0x04</key>
+															<string>DOS_FAT_16_S</string>
+															<key>0x06</key>
+															<string>DOS_FAT_16</string>
+															<key>0x07</key>
+															<string>Windows_NTFS</string>
+															<key>0x0B</key>
+															<string>DOS_FAT_32</string>
+															<key>0x0C</key>
+															<string>Windows_FAT_32</string>
+															<key>0x0E</key>
+															<string>Windows_FAT_16</string>
+															<key>0x14</key>
+															<string>DOS_FAT_16_S_Hidden</string>
+															<key>0x16</key>
+															<string>DOS_FAT_16_Hidden</string>
+															<key>0x42</key>
+															<string>Windows_LDM</string>
+															<key>0x82</key>
+															<string>Linux_Swap</string>
+															<key>0x83</key>
+															<string>Linux</string>
+															<key>0x8E</key>
+															<string>Linux_LVM</string>
+															<key>0xA5</key>
+															<string>FreeBSD</string>
+															<key>0xA6</key>
+															<string>OpenBSD</string>
+															<key>0xA7</key>
+															<string>Apple_Rhapsody_UFS</string>
+															<key>0xA8</key>
+															<string>Apple_UFS</string>
+															<key>0xA9</key>
+															<string>NetBSD</string>
+															<key>0xAB</key>
+															<string>Apple_Boot</string>
+															<key>0xAE</key>
+															<string>Apple_Encrypted</string>
+															<key>0xAF</key>
+															<string>Apple_HFS</string>
+															<key>0xFD</key>
+															<string>Linux_RAID</string>
+														</dict>
+														<key>IOClass</key>
+														<string>IOFDiskPartitionScheme</string>
+														<key>IOMatchCategory</key>
+														<string>IOStorage</string>
+														<key>IOMatchedAtBoot</key>
+														<true/>
+														<key>IOObjectClass</key>
+														<string>IOFDiskPartitionScheme</string>
+														<key>IOObjectRetainCount</key>
+														<integer>6</integer>
+														<key>IOPersonalityPublisher</key>
+														<string>com.apple.iokit.IOStorageFamily</string>
+														<key>IOProbeScore</key>
+														<integer>3000</integer>
+														<key>IOPropertyMatch</key>
+														<dict>
+															<key>Whole</key>
+															<true/>
+														</dict>
+														<key>IOProviderClass</key>
+														<string>IOMedia</string>
+														<key>IORegistryEntryChildren</key>
+														<array>
+															<dict>
+																<key>BSD Major</key>
+																<integer>1</integer>
+																<key>BSD Minor</key>
+																<integer>25</integer>
+																<key>BSD Name</key>
+																<string>disk6s1</string>
+																<key>BSD Unit</key>
+																<integer>6</integer>
+																<key>Base</key>
+																<integer>4194304</integer>
+																<key>Content</key>
+																<string>Windows_FAT_32</string>
+																<key>Content Hint</key>
+																<string>Windows_FAT_32</string>
+																<key>Ejectable</key>
+																<true/>
+																<key>IOBusyInterest</key>
+																<string>IOCommand is not serializable</string>
+																<key>IOGeneralInterest</key>
+																<string>IOCommand is not serializable</string>
+																<key>IOObjectClass</key>
+																<string>IOMedia</string>
+																<key>IOObjectRetainCount</key>
+																<integer>11</integer>
+																<key>IORegistryEntryChildren</key>
+																<array>
+																	<dict>
+																		<key>CFBundleIdentifier</key>
+																		<string>com.apple.iokit.IOStorageFamily</string>
+																		<key>CFBundleIdentifierKernel</key>
+																		<string>com.apple.iokit.IOStorageFamily</string>
+																		<key>IOClass</key>
+																		<string>IOMediaBSDClient</string>
+																		<key>IOMatchCategory</key>
+																		<string>IOMediaBSDClient</string>
+																		<key>IOMatchedAtBoot</key>
+																		<true/>
+																		<key>IOObjectClass</key>
+																		<string>IOMediaBSDClient</string>
+																		<key>IOObjectRetainCount</key>
+																		<integer>7</integer>
+																		<key>IOPersonalityPublisher</key>
+																		<string>com.apple.iokit.IOStorageFamily</string>
+																		<key>IOProbeScore</key>
+																		<integer>30000</integer>
+																		<key>IOProviderClass</key>
+																		<string>IOMedia</string>
+																		<key>IORegistryEntryID</key>
+																		<integer>4294977252</integer>
+																		<key>IORegistryEntryName</key>
+																		<string>IOMediaBSDClient</string>
+																		<key>IOResourceMatch</key>
+																		<string>IOBSD</string>
+																		<key>IOServiceBusyState</key>
+																		<integer>0</integer>
+																		<key>IOServiceBusyTime</key>
+																		<integer>1013541</integer>
+																		<key>IOServiceState</key>
+																		<integer>30</integer>
+																	</dict>
+																</array>
+																<key>IORegistryEntryID</key>
+																<integer>4294977251</integer>
+																<key>IORegistryEntryLocation</key>
+																<string>1</string>
+																<key>IORegistryEntryName</key>
+																<string>Untitled 1</string>
+																<key>IOServiceBusyState</key>
+																<integer>0</integer>
+																<key>IOServiceBusyTime</key>
+																<integer>4436916</integer>
+																<key>IOServiceState</key>
+																<integer>30</integer>
+																<key>Leaf</key>
+																<true/>
+																<key>Open</key>
+																<true/>
+																<key>Partition ID</key>
+																<integer>1</integer>
+																<key>Preferred Block Size</key>
+																<integer>512</integer>
+																<key>Removable</key>
+																<true/>
+																<key>Size</key>
+																<integer>15934160896</integer>
+																<key>Whole</key>
+																<false/>
+																<key>Writable</key>
+																<true/>
+															</dict>
+														</array>
+														<key>IORegistryEntryID</key>
+														<integer>4294977248</integer>
+														<key>IORegistryEntryName</key>
+														<string>IOFDiskPartitionScheme</string>
+														<key>IOServiceBusyState</key>
+														<integer>0</integer>
+														<key>IOServiceBusyTime</key>
+														<integer>4176000</integer>
+														<key>IOServiceState</key>
+														<integer>0</integer>
+													</dict>
+												</array>
+												<key>IORegistryEntryID</key>
+												<integer>4294977244</integer>
+												<key>IORegistryEntryName</key>
+												<string>Apple SDXC Reader Media</string>
+												<key>IOServiceBusyState</key>
+												<integer>0</integer>
+												<key>IOServiceBusyTime</key>
+												<integer>10199083</integer>
+												<key>IOServiceState</key>
+												<integer>30</integer>
+												<key>Leaf</key>
+												<false/>
+												<key>Open</key>
+												<true/>
+												<key>Preferred Block Size</key>
+												<integer>512</integer>
+												<key>Removable</key>
+												<true/>
+												<key>Size</key>
+												<integer>15938355200</integer>
+												<key>Whole</key>
+												<true/>
+												<key>Writable</key>
+												<true/>
+											</dict>
+										</array>
+										<key>IORegistryEntryID</key>
+										<integer>4294970224</integer>
+										<key>IORegistryEntryName</key>
+										<string>IOBlockStorageDriver</string>
+										<key>IOServiceBusyState</key>
+										<integer>0</integer>
+										<key>IOServiceBusyTime</key>
+										<integer>82474333</integer>
+										<key>IOServiceState</key>
+										<integer>30</integer>
+										<key>Statistics</key>
+										<dict>
+											<key>Bytes (Read)</key>
+											<integer>43519488</integer>
+											<key>Bytes (Write)</key>
+											<integer>57383936</integer>
+											<key>Errors (Read)</key>
+											<integer>0</integer>
+											<key>Errors (Write)</key>
+											<integer>3</integer>
+											<key>Latency Time (Read)</key>
+											<integer>0</integer>
+											<key>Latency Time (Write)</key>
+											<integer>0</integer>
+											<key>Operations (Read)</key>
+											<integer>3139</integer>
+											<key>Operations (Write)</key>
+											<integer>4868</integer>
+											<key>Retries (Read)</key>
+											<integer>0</integer>
+											<key>Retries (Write)</key>
+											<integer>0</integer>
+											<key>Total Time (Read)</key>
+											<integer>125275436302</integer>
+											<key>Total Time (Write)</key>
+											<integer>467216053601</integer>
+										</dict>
+									</dict>
+								</array>
+								<key>IORegistryEntryID</key>
+								<integer>4294970222</integer>
+								<key>IORegistryEntryName</key>
+								<string>AppleSDXCBlockStorageDevice</string>
+								<key>IOReportLegend</key>
+								<array>
+									<dict>
+										<key>IOReportChannelInfo</key>
+										<dict>
+											<key>IOReportChannelUnit</key>
+											<integer>72058115876454424</integer>
+										</dict>
+										<key>IOReportChannels</key>
+										<array>
+											<array>
+												<integer>6000017649462957906</integer>
+												<integer>21474967554</integer>
+												<string>AppleSDXCBlockStorageDevice Power State</string>
+											</array>
+										</array>
+										<key>IOReportGroupName</key>
+										<string>SDXC Controller</string>
+									</dict>
+								</array>
+								<key>IOReportLegendPublic</key>
+								<true/>
+								<key>IOServiceBusyState</key>
+								<integer>0</integer>
+								<key>IOServiceBusyTime</key>
+								<integer>82718583</integer>
+								<key>IOServiceState</key>
+								<integer>30</integer>
+								<key>Logical Block Size</key>
+								<integer>512</integer>
+								<key>Physical Block Size</key>
+								<integer>512</integer>
+								<key>Protocol Characteristics</key>
+								<dict>
+									<key>Physical Interconnect</key>
+									<string>Secure Digital</string>
+									<key>Physical Interconnect Location</key>
+									<string>Internal</string>
+								</dict>
+								<key>device-type</key>
+								<string>Generic</string>
+							</dict>
+						</array>
+						<key>IORegistryEntryID</key>
+						<integer>4294970219</integer>
+						<key>IORegistryEntryLocation</key>
+						<string>1</string>
+						<key>IORegistryEntryName</key>
+						<string>Port-SD Card</string>
+						<key>IOReportLegend</key>
+						<array>
+							<dict>
+								<key>IOReportChannelInfo</key>
+								<dict>
+									<key>IOReportChannelUnit</key>
+									<integer>72058115876454424</integer>
+								</dict>
+								<key>IOReportChannels</key>
+								<array>
+									<array>
+										<integer>6000017649748170578</integer>
+										<integer>17180000258</integer>
+										<string>AppleSDXCSlot Power State</string>
+									</array>
+								</array>
+								<key>IOReportGroupName</key>
+								<string>SDXC Controller</string>
+							</dict>
+						</array>
+						<key>IOReportLegendPublic</key>
+						<true/>
+						<key>IOServiceBusyState</key>
+						<integer>0</integer>
+						<key>IOServiceBusyTime</key>
+						<integer>90674083</integer>
+						<key>IOServiceState</key>
+						<integer>30</integer>
+						<key>IOUnit</key>
+						<integer>1</integer>
+						<key>IOUserClientClass</key>
+						<string>IOPortUserClient</string>
+						<key>Metadata</key>
+						<dict/>
+						<key>PortDescription</key>
+						<string>Port-SD Card@1</string>
+						<key>PortNumber</key>
+						<integer>1</integer>
+						<key>PortType</key>
+						<integer>11</integer>
+						<key>PortTypeDescription</key>
+						<string>SD Card</string>
+						<key>SD Card Configuration Count</key>
+						<integer>2</integer>
+						<key>Slot</key>
+						<integer>1</integer>
+						<key>Speed Mode</key>
+						<string>UHS: SDR104</string>
+						<key>TRANS TRM Active</key>
+						<false/>
+						<key>TRM Just Approved</key>
+						<false/>
+						<key>TransportsActive</key>
+						<array>
+							<string>SD</string>
+						</array>
+						<key>TransportsProvisioned</key>
+						<array>
+							<string>SD</string>
+						</array>
+						<key>TransportsSupported</key>
+						<array>
+							<string>SD</string>
+						</array>
+						<key>TransportsUnauthorized</key>
+						<array/>
+						<key>TunedDelay2</key>
+						<integer>5</integer>
+						<key>UserAuthorizationPending</key>
+						<false/>
+						<key>UserAuthorizationStatus</key>
+						<integer>1</integer>
+						<key>UserAuthorizationStatusDescription</key>
+						<string>No Action</string>
+						<key>r44</key>
+						<integer>-469712397</integer>
+						<key>r48</key>
+						<integer>-1878493634</integer>
+						<key>r544</key>
+						<integer>5</integer>
+						<key>r60</key>
+						<integer>-1197631079</integer>
+						<key>r64</key>
+						<integer>-702281148</integer>
+						<key>r68</key>
+						<integer>-14680063</integer>
+						<key>r6C</key>
+						<integer>108</integer>
+						<key>r70</key>
+						<integer>-59562317</integer>
+						<key>r78</key>
+						<integer>4129573</integer>
+						<key>sdr104-delay1</key>
+						<integer>2</integer>
+						<key>sdr104-delay3</key>
+						<integer>2</integer>
+						<key>sdr104-invert1</key>
+						<integer>0</integer>
+						<key>sdr104-invert2</key>
+						<integer>0</integer>
+						<key>sdr104-invert3</key>
+						<integer>1</integer>
+					</dict>
+				</array>
+				<key>IORegistryEntryID</key>
+				<integer>4294970212</integer>
+				<key>IORegistryEntryName</key>
+				<string>AppleSDXC</string>
+				<key>IOReportLegend</key>
+				<array>
+					<dict>
+						<key>IOReportChannelInfo</key>
+						<dict>
+							<key>IOReportChannelUnit</key>
+							<integer>72058115876454424</integer>
+						</dict>
+						<key>IOReportChannels</key>
+						<array>
+							<array>
+								<integer>6000017649479735122</integer>
+								<integer>17180000258</integer>
+								<string>AppleSDXC Power State</string>
+							</array>
+						</array>
+						<key>IOReportGroupName</key>
+						<string>SDXC Controller</string>
+					</dict>
+				</array>
+				<key>IOReportLegendPublic</key>
+				<true/>
+				<key>IOServiceBusyState</key>
+				<integer>0</integer>
+				<key>IOServiceBusyTime</key>
+				<integer>90680041</integer>
+				<key>IOServiceState</key>
+				<integer>30</integer>
+				<key>PCIe Link Speed Gen2 Failure Count</key>
+				<integer>0</integer>
+				<key>PCIe Link Speed Gen2 Retrain Count</key>
+				<integer>2</integer>
+				<key>Protocol Characteristics</key>
+				<dict>
+					<key>Physical Interconnect</key>
+					<string>Secure Digital</string>
+					<key>Physical Interconnect Location</key>
+					<string>Internal</string>
+				</dict>
+				<key>Revision</key>
+				<integer>6</integer>
+				<key>SDXC D3/D0</key>
+				<false/>
+				<key>SDXC PCIe Link Speed Retrain Failure Count Gen 1</key>
+				<integer>0</integer>
+				<key>SDXC PCIe Link Speed Retrain Failure Count Gen 2</key>
+				<integer>0</integer>
+				<key>SDXC Powered</key>
+				<true/>
+				<key>Start Link</key>
+				<integer>3</integer>
+			</dict>
+		</array>
+		<key>IORegistryEntryID</key>
+		<integer>4294970206</integer>
+		<key>IORegistryEntryLocation</key>
+		<string>0</string>
+		<key>IORegistryEntryName</key>
+		<string>pcie-sdreader</string>
+		<key>IOReportLegend</key>
+		<array>
+			<dict>
+				<key>IOReportChannelInfo</key>
+				<dict>
+					<key>IOReportChannelUnit</key>
+					<integer>0</integer>
+				</dict>
+				<key>IOReportChannels</key>
+				<array>
+					<array>
+						<integer>5291294645182070784</integer>
+						<integer>4295098369</integer>
+						<string>               First Level Interrupt Handler Count</string>
+					</array>
+					<array>
+						<integer>5291294645182070785</integer>
+						<integer>4295098369</integer>
+						<string>              Second Level Interrupt Handler Count</string>
+					</array>
+					<array>
+						<integer>5291294645182070786</integer>
+						<integer>4295098369</integer>
+						<string>        First Level Interrupt Handler Time (MATUs)</string>
+					</array>
+					<array>
+						<integer>5291294645182070787</integer>
+						<integer>4295098369</integer>
+						<string>   Second Level Interrupt Handler CPU Time (MATUs)</string>
+					</array>
+					<array>
+						<integer>5291294645182070788</integer>
+						<integer>4295098369</integer>
+						<string>Second Level Interrupt Handler System Time (MATUs)</string>
+					</array>
+				</array>
+				<key>IOReportGroupName</key>
+				<string>Interrupt Statistics (by index)</string>
+				<key>IOReportSubGroupName</key>
+				<string>pcie-sdreader 1</string>
+			</dict>
+			<dict>
+				<key>IOReportChannelInfo</key>
+				<dict>
+					<key>IOReportChannelUnit</key>
+					<integer>0</integer>
+				</dict>
+				<key>IOReportChannels</key>
+				<array>
+					<array>
+						<integer>5291294645182005248</integer>
+						<integer>4295098369</integer>
+						<string>               First Level Interrupt Handler Count</string>
+					</array>
+					<array>
+						<integer>5291294645182005249</integer>
+						<integer>4295098369</integer>
+						<string>              Second Level Interrupt Handler Count</string>
+					</array>
+					<array>
+						<integer>5291294645182005250</integer>
+						<integer>4295098369</integer>
+						<string>        First Level Interrupt Handler Time (MATUs)</string>
+					</array>
+					<array>
+						<integer>5291294645182005251</integer>
+						<integer>4295098369</integer>
+						<string>   Second Level Interrupt Handler CPU Time (MATUs)</string>
+					</array>
+					<array>
+						<integer>5291294645182005252</integer>
+						<integer>4295098369</integer>
+						<string>Second Level Interrupt Handler System Time (MATUs)</string>
+					</array>
+				</array>
+				<key>IOReportGroupName</key>
+				<string>Interrupt Statistics (by index)</string>
+				<key>IOReportSubGroupName</key>
+				<string>pcie-sdreader 0</string>
+			</dict>
+		</array>
+		<key>IOReportLegendPublic</key>
+		<true/>
+		<key>IOServiceBusyState</key>
+		<integer>0</integer>
+		<key>IOServiceBusyTime</key>
+		<integer>138701166</integer>
+		<key>IOServiceDEXTEntitlements</key>
+		<array>
+			<array>
+				<string>com.apple.developer.driverkit.transport.pci</string>
+			</array>
+		</array>
+		<key>IOServiceState</key>
+		<integer>30</integer>
+		<key>assigned-addresses</key>
+		<data>
+		EAABggAAAMAAAAAAABAAAAAAAAA=
+		</data>
+		<key>card-detect-polarity</key>
+		<data>
+		AQAAAA==
+		</data>
+		<key>class-code</key>
+		<data>
+		AQUIAA==
+		</data>
+		<key>compatible</key>
+		<data>
+		cGNpMTdhMCw5NzU1AHBjaWNsYXNzLDA4MDUwMQBwY2llLXNkcmVhZGVyAA==
+		</data>
+		<key>device-id</key>
+		<data>
+		VZcAAA==
+		</data>
+		<key>device_type</key>
+		<data>
+		cGNpZS1kZXZpY2UA
+		</data>
+		<key>disallow-sdr50-tuning</key>
+		<data>
+		AQAAAA==
+		</data>
+		<key>dont-always-retrain</key>
+		<data>
+		</data>
+		<key>expected-link-speed</key>
+		<data>
+		AgAAAA==
+		</data>
+		<key>features-supported</key>
+		<data>
+		AQAAAA==
+		</data>
+		<key>function-pcie_port_control_sd</key>
+		<data>
+		SQAAAEN0clBNAAAA
+		</data>
+		<key>function-sd_pwr_en</key>
+		<data>
+		tgAAADRXS3BhMVBnAAAAAA==
+		</data>
+		<key>gl9755-ctrl-max-freq-dev</key>
+		<data>
+		AQAAAA==
+		</data>
+		<key>gl9755-dir-count-recv-swthd</key>
+		<data>
+		AwAAAA==
+		</data>
+		<key>gl9755-dir-count-trans</key>
+		<data>
+		AwAAAA==
+		</data>
+		<key>gl9755-disable-decoding</key>
+		<data>
+		AQAAAA==
+		</data>
+		<key>gl9755-enable-transition</key>
+		<data>
+		AQAAAA==
+		</data>
+		<key>gl9755-iipoe</key>
+		<data>
+		AQAAAA==
+		</data>
+		<key>gl9755-layer-ver-sel</key>
+		<data>
+		AgAAAA==
+		</data>
+		<key>gl9755-reg_60-cd</key>
+		<data>
+		DQAAAA==
+		</data>
+		<key>gl9755-sdr104-delay1</key>
+		<data>
+		AgAAAA==
+		</data>
+		<key>gl9755-sdr104-delay2</key>
+		<data>
+		BgAAAA==
+		</data>
+		<key>gl9755-sdr104-delay3</key>
+		<data>
+		AgAAAA==
+		</data>
+		<key>gl9755-sdr104-invert1</key>
+		<data>
+		AAAAAA==
+		</data>
+		<key>gl9755-sdr104-invert2</key>
+		<data>
+		AAAAAA==
+		</data>
+		<key>gl9755-sdr104-invert3</key>
+		<data>
+		AQAAAA==
+		</data>
+		<key>gl9755-ssc_enable</key>
+		<data>
+		AQAAAA==
+		</data>
+		<key>gl9755-ssc_step</key>
+		<data>
+		FgAAAA==
+		</data>
+		<key>initial-link-speed</key>
+		<data>
+		AQAAAA==
+		</data>
+		<key>interrupt-parent</key>
+		<data>
+		tgAAAA==
+		</data>
+		<key>interrupts</key>
+		<data>
+		DgAAAA==
+		</data>
+		<key>iommu-parent</key>
+		<data>
+		UwAAAA==
+		</data>
+		<key>name</key>
+		<data>
+		cGNpZS1zZHJlYWRlcgA=
+		</data>
+		<key>pci-aspm-default</key>
+		<integer>0</integer>
+		<key>pcidebug</key>
+		<string>1:0:0</string>
+		<key>port-number</key>
+		<data>
+		AQAAAA==
+		</data>
+		<key>port-type</key>
+		<data>
+		CwAAAA==
+		</data>
+		<key>power-gate-with-media</key>
+		<data>
+		AQAAAA==
+		</data>
+		<key>reg</key>
+		<data>
+		AAABAAAAAAAAAAAAAAAAAAAAAAAQAAECAAAAAAAAAAAAEAAAAAAAAA==
+		</data>
+		<key>revision-id</key>
+		<data>
+		AQAAAA==
+		</data>
+		<key>subsystem-id</key>
+		<data>
+		VZcAAA==
+		</data>
+		<key>subsystem-vendor-id</key>
+		<data>
+		oBcAAA==
+		</data>
+		<key>transports-supported</key>
+		<data>
+		DAAAAA==
+		</data>
+		<key>vendor-id</key>
+		<data>
+		oBcAAA==
+		</data>
+		<key>write-protect-polarity</key>
+		<data>
+		AQAAAA==
+		</data>
+	</dict>
+</array>
+</plist>

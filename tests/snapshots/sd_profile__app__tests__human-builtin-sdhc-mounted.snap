@@ -1,0 +1,31 @@
+---
+source: src/app.rs
+expression: human(&profile)
+---
+Target           /dev/disk6 (card in the built-in reader)
+
+Card             SDHC, 14.8 GiB (15938355200 bytes)
+  Manufacturer   0xdf (not a known manufacturer ID)
+  OEM ID         0x3428 ("4(")
+  Product        "SD"
+  Revision       2.0
+  Serial number  0x0000039e
+  Manufactured   2020-10
+  SD spec        3.0+ (the OS reports no version above this one)
+  Speed class    Class 10
+  UHS-II         not supported
+  Write protect  off
+
+Reader           Apple Built In SDXC Reader
+  Connection     built-in, PCI 17a0:9755 (subsystem 17a0:9755, revision 0x01)
+  PCIe link      5.0 GT/s x1 (PCIe gen 2)
+  UHS-II         supported
+  Card bus       UHS-I SDR104, 4 data lines, 200 MHz
+
+Mounts
+  disk6s1        /Volumes/BOOTFS (msdos, nosuid, nodev, noatime)
+
+Size             14.8 GiB (15938355200 bytes)
+Sector size      512 bytes (31129600 sectors)
+
+Partition table  unavailable (needs root, run with sudo)

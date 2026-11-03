@@ -8,9 +8,27 @@ expression: out
     "kind": "disk_image",
     "path": "superfloppy-fat32.img"
   },
+  "card": {
+    "value": null,
+    "unavailable": "disk_image"
+  },
+  "reader": {
+    "value": null,
+    "unavailable": "disk_image"
+  },
+  "mounts": {
+    "value": null,
+    "unavailable": "disk_image"
+  },
   "layout": {
-    "size_bytes": 67108864,
-    "block_size": 512,
+    "size_bytes": {
+      "value": 67108864,
+      "source": "file_size"
+    },
+    "block_size": {
+      "value": 512,
+      "source": "sd_specification"
+    },
     "partition_table": {
       "value": {
         "scheme": "none",
