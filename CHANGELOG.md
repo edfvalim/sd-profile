@@ -2,6 +2,35 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## v0.1.0 - 2026-11-03
+#### Documentation
+- (**repo**) document installing the prebuilt binaries - (2e90777) - Eduardo Valim
+- (**repo**) push the version tag by name - (7c45dea) - Eduardo Valim
+#### Continuous Integration
+- (**release**) name release assets without the version - (0cd965d) - Eduardo Valim
+- (**repo**) run the done checks on pushes and pull requests - (196fe7d) - Eduardo Valim
+
+- - -
+
+## v0.1.0-rc.1 - 2026-11-03
+#### Features
+- (**cli**) harden profiling for pulled cards, MMC and real card layouts - (cb169fa) - Eduardo Valim
+- (**cli**) profile a real card's partitions and filesystems as root - (af092db) - Eduardo Valim
+- (**disk**) profile filesystems and partition alignment - (5a07655) - Eduardo Valim
+- (**disk**) profile partition tables of disk images - (229376f) - Eduardo Valim
+- (**macos**) read card, reader and mounts from the I/O Registry - (750bcc8) - Eduardo Valim
+#### Documentation
+- (**repo**) add push step to git workflow - (24b9c66) - Eduardo Valim
+#### Build system
+- (**release**) let git sign the bump commit - (19a7ebe) - Eduardo Valim
+#### Continuous Integration
+- (**release**) add the release workflow, version bump hooks and public README - (97cf67e) - Eduardo Valim
+#### Miscellaneous Chores
+- (**repo**) scaffold crate with license, readme and agent conventions - (071748b) - Eduardo Valim
+- (**version**) v0.1.0-rc.1 - (c418d18) - Eduardo Valim
+
+- - -
+
 ## v0.1.0-rc.1 - 2026-11-03
 #### Features
 - (**cli**) harden profiling for pulled cards, MMC and real card layouts - (cb169fa) - Eduardo Valim
